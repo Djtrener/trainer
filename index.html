@@ -2,272 +2,317 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>Тренажёр слов</title>
-<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=Inter:wght@400;500&display=swap" rel="stylesheet">
 <style>
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 :root {
   --bg: #0f0f0f; --surface: #1a1a1a; --surface2: #242424;
-  --border: #2e2e2e; --text: #f0f0f0; --muted: #888;
+  --border: #2e2e2e; --text: #f0f0f0; --muted: #666;
   --accent: #c8f135; --ok: #3ecf8e; --err: #ff5c5c;
-  --ok-bg: #0d2e1f; --err-bg: #2e0d0d; --radius: 12px;
 }
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
-header { width: 100%; padding: 1.2rem 2rem; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border); }
-header h1 { font-family: 'Unbounded', sans-serif; font-size: 15px; font-weight: 600; color: var(--accent); }
-.dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); }
-.tabs { display: flex; gap: 4px; padding: 1rem 2rem 0; width: 100%; max-width: 680px; }
-.tab { padding: 8px 18px; font-size: 13px; font-weight: 500; border-radius: 8px 8px 0 0; cursor: pointer; border: 1px solid transparent; border-bottom: none; background: transparent; color: var(--muted); }
-.tab.active { background: var(--surface); color: var(--text); border-color: var(--border); }
-.panel { width: 100%; max-width: 680px; background: var(--surface); border: 1px solid var(--border); border-top: none; border-radius: 0 var(--radius) var(--radius) var(--radius); padding: 2rem; margin-bottom: 2rem; }
-.list-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; }
-.list-header h2 { font-family: 'Unbounded', sans-serif; font-size: 13px; color: var(--muted); font-weight: 400; }
-.btn-a { background: var(--accent); color: #0f0f0f; border: none; border-radius: 8px; padding: 8px 16px; font-size: 13px; font-weight: 600; cursor: pointer; }
-.btn-a:hover { opacity: 0.85; }
-.btn-g { background: transparent; color: var(--muted); border: 1px solid var(--border); border-radius: 8px; padding: 6px 14px; font-size: 12px; cursor: pointer; }
-.btn-g:hover { color: var(--text); border-color: #555; }
-.btn-d { background: transparent; color: var(--err); border: 1px solid #3a1a1a; border-radius: 8px; padding: 6px 14px; font-size: 12px; cursor: pointer; }
-.btn-d:hover { background: var(--err-bg); }
-.list-card { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem 1.25rem; margin-bottom: 10px; display: flex; align-items: center; gap: 12px; cursor: pointer; }
-.list-card:hover { border-color: #444; }
-.list-card.sel { border-color: var(--accent); }
-.lname { font-size: 15px; font-weight: 500; flex: 1; }
-.lcnt { font-size: 12px; color: var(--muted); }
-.overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 100; align-items: center; justify-content: center; }
-.overlay.open { display: flex; }
-.modal { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 2rem; width: 90%; max-width: 560px; max-height: 85vh; overflow-y: auto; }
-.modal h3 { font-family: 'Unbounded', sans-serif; font-size: 14px; margin-bottom: 1rem; }
-.modal input { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; font-size: 14px; color: var(--text); margin-bottom: 1rem; outline: none; }
-.modal input:focus { border-color: var(--accent); }
-.modal textarea { width: 100%; height: 240px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; font-size: 13px; font-family: 'Inter', monospace; color: var(--text); resize: vertical; outline: none; line-height: 1.8; }
-.modal textarea:focus { border-color: var(--accent); }
-.hint { font-size: 11px; color: var(--muted); margin: 4px 0 1rem; }
-.mact { display: flex; gap: 8px; justify-content: flex-end; margin-top: 1rem; }
-.mode-row { display: flex; gap: 8px; margin-bottom: 1.2rem; }
-.mbtn { flex: 1; padding: 10px; font-size: 13px; border: 1px solid var(--border); border-radius: 8px; background: transparent; color: var(--muted); cursor: pointer; }
-.mbtn.active { border-color: var(--accent); color: var(--accent); background: rgba(200,241,53,0.05); }
-.opts { display: flex; gap: 14px; margin-bottom: 1.2rem; flex-wrap: wrap; }
-.ck { display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--muted); cursor: pointer; }
-input[type="checkbox"] { accent-color: var(--accent); width: 14px; height: 14px; }
-.tw { text-align: center; font-family: 'Unbounded', sans-serif; font-size: 36px; font-weight: 800; color: var(--text); min-height: 56px; margin: 1.2rem 0 0.4rem; letter-spacing: -1px; line-height: 1.1; }
-.ts { text-align: center; font-size: 12px; color: var(--muted); margin-bottom: 1.2rem; }
-#ainput { width: 100%; background: var(--surface2); border: 2px solid var(--border); border-radius: var(--radius); padding: 14px 18px; font-size: 22px; text-align: center; color: var(--text); outline: none; transition: border-color 0.2s, background 0.2s; font-family: 'Inter', sans-serif; }
-#ainput:focus { border-color: #555; }
-#ainput.cor { border-color: var(--ok); background: var(--ok-bg); color: var(--ok); }
-#ainput.wrg { border-color: var(--err); background: var(--err-bg); color: var(--err); }
-#cans { font-size: 28px; text-align: center; color: var(--ok); font-weight: 700; min-height: 48px; padding: 8px 0; display: none; }
-#fb { text-align: center; min-height: 24px; margin-top: 10px; font-size: 15px; font-weight: 500; color: var(--muted); }
-#fb.ok { color: var(--ok); }
-#fb.er { color: var(--err); }
-.pwrap { height: 3px; background: var(--surface2); border-radius: 2px; margin-bottom: 1.2rem; overflow: hidden; }
-.pbar { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.4s; width: 0%; }
-.srow { display: flex; gap: 10px; margin-top: 1rem; }
-.sbox { flex: 1; background: var(--surface2); border-radius: 10px; padding: 12px; text-align: center; }
-.sbox.cl { cursor: pointer; }
-.sbox.cl:hover { background: #2e2e2e; }
-.sv { font-size: 22px; font-weight: 600; font-family: 'Unbounded', sans-serif; }
-.sl { font-size: 11px; color: var(--muted); margin-top: 3px; }
-.ok-c { color: var(--ok); }
-.er-c { color: var(--err); }
-.empty { text-align: center; color: var(--muted); padding: 3rem 0; font-size: 14px; }
-.empty span { display: block; font-size: 32px; margin-bottom: 10px; }
-.fin { text-align: center; padding: 2rem 0; }
-.fin .em { font-size: 52px; margin-bottom: 1rem; }
-.fin h2 { font-family: 'Unbounded', sans-serif; font-size: 18px; margin-bottom: 0.5rem; }
-.fin p { color: var(--muted); font-size: 14px; margin-bottom: 1.5rem; }
-.sgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 1.5rem; }
-.bstat { background: var(--surface2); border-radius: var(--radius); padding: 1.25rem; }
-.bstat .v { font-family: 'Unbounded', sans-serif; font-size: 32px; font-weight: 800; color: var(--accent); }
-.bstat .l { font-size: 12px; color: var(--muted); margin-top: 4px; }
-.mi { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 14px; }
-.miru { color: var(--muted); }
-.mico { font-size: 11px; color: var(--muted); background: var(--surface2); border-radius: 4px; padding: 2px 6px; }
-select { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 8px 12px; font-size: 13px; color: var(--text); cursor: pointer; outline: none; }
+html, body {
+  height: 100%; width: 100%;
+  background: var(--bg); color: var(--text);
+  font-family: -apple-system, 'Inter', sans-serif;
+  overflow: hidden;
+}
+
+/* SCREENS */
+.screen { display: none; height: 100vh; width: 100%; flex-direction: column; }
+.screen.active { display: flex; }
+
+/* ===== LISTS SCREEN ===== */
+#s-lists { padding: 0; }
+.lists-header {
+  padding: 1.2rem 1.4rem 1rem;
+  display: flex; justify-content: space-between; align-items: center;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+.lists-header h1 { font-size: 17px; font-weight: 700; color: var(--accent); letter-spacing: -0.5px; }
+.btn-new {
+  background: var(--accent); color: #0f0f0f;
+  border: none; border-radius: 20px;
+  padding: 8px 16px; font-size: 13px; font-weight: 700; cursor: pointer;
+}
+.lists-body { flex: 1; overflow-y: auto; padding: 1rem; }
+.list-item {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 14px; padding: 1rem 1.2rem;
+  margin-bottom: 10px; display: flex; align-items: center; gap: 10px;
+}
+.list-item.active-list { border-color: var(--accent); }
+.li-info { flex: 1; cursor: pointer; }
+.li-name { font-size: 16px; font-weight: 600; }
+.li-cnt { font-size: 12px; color: var(--muted); margin-top: 2px; }
+.li-btns { display: flex; gap: 6px; }
+.li-btns button { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--muted); font-size: 16px; width: 34px; height: 34px; cursor: pointer; }
+.start-btn {
+  margin: 0 1rem 1.2rem;
+  background: var(--accent); color: #0f0f0f;
+  border: none; border-radius: 14px;
+  padding: 16px; font-size: 16px; font-weight: 700; cursor: pointer;
+  width: calc(100% - 2rem);
+}
+.empty-hint { text-align: center; color: var(--muted); padding: 3rem 1rem; font-size: 14px; }
+.empty-hint span { display: block; font-size: 40px; margin-bottom: 10px; }
+
+/* ===== EDITOR SCREEN ===== */
+#s-editor { background: var(--bg); }
+.editor-header {
+  padding: 1.2rem 1.4rem;
+  display: flex; align-items: center; gap: 12px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+.back-btn { background: none; border: none; color: var(--muted); font-size: 22px; cursor: pointer; padding: 0 4px; }
+.editor-header h2 { font-size: 16px; font-weight: 600; flex: 1; }
+.save-btn { background: var(--accent); color: #0f0f0f; border: none; border-radius: 20px; padding: 7px 16px; font-size: 13px; font-weight: 700; cursor: pointer; }
+.editor-body { flex: 1; padding: 1rem; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; }
+.editor-body input, .editor-body textarea {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; padding: 12px 14px;
+  font-size: 14px; color: var(--text); outline: none; width: 100%;
+}
+.editor-body input:focus, .editor-body textarea:focus { border-color: var(--accent); }
+.editor-body textarea { height: 55vh; resize: none; font-family: monospace; line-height: 1.8; }
+.editor-hint { font-size: 11px; color: var(--muted); padding: 0 2px; }
+
+/* ===== TRAINER SCREEN ===== */
+#s-trainer {
+  background: var(--bg);
+  position: relative;
+}
+.trainer-top {
+  padding: 1rem 1.2rem 0.6rem;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.t-list-name { font-size: 13px; color: var(--muted); }
+.t-progress { font-size: 13px; color: var(--muted); }
+.pbar-wrap { height: 2px; background: var(--surface2); margin: 0 1.2rem; border-radius: 2px; overflow: hidden; }
+.pbar { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.3s; }
+
+.card-area {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 1.5rem 1.5rem 1rem;
+  cursor: pointer;
+  user-select: none;
+}
+.card-word {
+  font-size: clamp(28px, 8vw, 48px);
+  font-weight: 800; text-align: center;
+  color: var(--text); letter-spacing: -1px;
+  line-height: 1.1; margin-bottom: 1rem;
+}
+.card-translation {
+  font-size: clamp(18px, 5vw, 28px);
+  font-weight: 500; text-align: center;
+  color: var(--ok); min-height: 2em;
+  opacity: 0; transition: opacity 0.25s;
+  line-height: 1.3;
+}
+.card-translation.show { opacity: 1; }
+.tap-hint {
+  font-size: 13px; color: var(--muted);
+  margin-top: 1.5rem; opacity: 1;
+  transition: opacity 0.2s;
+}
+.tap-hint.hidden { opacity: 0; }
+
+/* 3 bottom buttons */
+.bottom-btns {
+  display: flex; gap: 0;
+  padding: 0.8rem 1rem 1.4rem;
+  padding-bottom: calc(0.8rem + env(safe-area-inset-bottom, 0px));
+}
+.bbtn {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  background: var(--surface); border: 1px solid var(--border);
+  padding: 14px 8px; cursor: pointer; gap: 5px;
+  transition: background 0.15s;
+}
+.bbtn:first-child { border-radius: 14px 0 0 14px; }
+.bbtn:last-child { border-radius: 0 14px 14px 0; }
+.bbtn:not(:first-child) { border-left: none; }
+.bbtn:active { background: var(--surface2); }
+.bbtn-icon { font-size: 22px; line-height: 1; }
+.bbtn-label { font-size: 11px; color: var(--muted); font-weight: 500; }
+.bbtn.center { background: var(--accent); border-color: var(--accent); }
+.bbtn.center .bbtn-icon { color: #0f0f0f; font-size: 26px; }
+.bbtn.center .bbtn-label { color: #1a2000; font-weight: 700; }
+.bbtn.center:active { opacity: 0.85; }
+.bbtn.stop-btn .bbtn-icon { color: var(--err); }
+
+/* mode selector on trainer */
+.mode-bar {
+  display: flex; gap: 6px; padding: 0 1.2rem 0.6rem;
+}
+.mbtn {
+  flex: 1; padding: 7px 4px; font-size: 12px;
+  border: 1px solid var(--border); border-radius: 8px;
+  background: transparent; color: var(--muted); cursor: pointer;
+}
+.mbtn.on { border-color: var(--accent); color: var(--accent); background: rgba(200,241,53,0.07); }
 </style>
 </head>
 <body>
-<header><div class="dot"></div><h1>ТРЕНАЖЁР СЛОВ</h1></header>
 
-<div class="tabs">
-  <button class="tab active" onclick="goTab('lists')">Списки</button>
-  <button class="tab" onclick="goTab('trainer')">Тренировка</button>
-  <button class="tab" onclick="goTab('stats')">Статистика</button>
+<!-- LISTS SCREEN -->
+<div class="screen active" id="s-lists">
+  <div class="lists-header">
+    <h1>&#127351; СЛОВА</h1>
+    <button class="btn-new" onclick="openEditor(null)">+ Список</button>
+  </div>
+  <div class="lists-body" id="lists-body"></div>
+  <button class="start-btn" onclick="startTrainer()">&#9654; Начать</button>
 </div>
 
-<div class="panel" id="p-lists">
-  <div class="list-header">
-    <h2>МОИ СПИСКИ</h2>
-    <button class="btn-a" onclick="openEd(null)">+ Новый список</button>
+<!-- EDITOR SCREEN -->
+<div class="screen" id="s-editor">
+  <div class="editor-header">
+    <button class="back-btn" onclick="showScreen('s-lists')">&#8592;</button>
+    <h2 id="ed-title">Новый список</h2>
+    <button class="save-btn" onclick="saveList()">Сохранить</button>
   </div>
-  <div id="lc"></div>
+  <div class="editor-body">
+    <input type="text" id="ed-name" placeholder="Название (напр: Урок 1)">
+    <textarea id="ed-words" placeholder="кот = cat&#10;собака = dog&#10;&#10;Или вставь из таблицы (Tab)"></textarea>
+    <div class="editor-hint">Формат: слово = word &nbsp;|&nbsp; или Tab (из Excel/Google Sheets)</div>
+  </div>
 </div>
 
-<div class="panel" id="p-trainer" style="display:none;">
-  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:8px;">
-    <select id="lsel" onchange="onSel()"></select>
-    <div class="opts">
-      <label class="ck"><input type="checkbox" id="shuf" checked> перемешать</label>
-      <label class="ck"><input type="checkbox" id="loop" checked> &#128260; цикл</label>
-    </div>
+<!-- TRAINER SCREEN -->
+<div class="screen" id="s-trainer">
+  <div class="trainer-top">
+    <span class="t-list-name" id="t-listname"></span>
+    <span class="t-progress" id="t-prog"></span>
   </div>
-  <div class="mode-row">
-    <button class="mbtn active" id="mb0" onclick="setM('ru-en',0)">RU &#8594; EN</button>
-    <button class="mbtn" id="mb1" onclick="setM('en-ru',1)">EN &#8594; RU</button>
-    <button class="mbtn" id="mb2" onclick="setM('both',2)">Оба</button>
+  <div class="pbar-wrap"><div class="pbar" id="pbar"></div></div>
+  <div class="mode-bar">
+    <button class="mbtn on" id="mb0" onclick="setMode('ru-en',0)">RU &#8594; EN</button>
+    <button class="mbtn" id="mb1" onclick="setMode('en-ru',1)">EN &#8594; RU</button>
+    <button class="mbtn" id="mb2" onclick="setMode('both',2)">Оба</button>
   </div>
-  <button class="btn-a" style="width:100%;padding:14px;font-size:15px;margin-bottom:1rem;" onclick="startT()">&#9654; Начать тренировку</button>
-  <div id="tc"></div>
-</div>
-
-<div class="panel" id="p-stats" style="display:none;">
-  <div class="sgrid">
-    <div class="bstat"><div class="v" id="ss">0</div><div class="l">тренировок</div></div>
-    <div class="bstat"><div class="v" id="sw">0</div><div class="l">слов пройдено</div></div>
-    <div class="bstat"><div class="v" id="sc">0</div><div class="l">верных</div></div>
-    <div class="bstat"><div class="v ok-c" id="sp">0%</div><div class="l">точность</div></div>
+  <div class="card-area" id="card-area" onclick="showTranslation()">
+    <div class="card-word" id="card-word"></div>
+    <div class="card-translation" id="card-tr"></div>
+    <div class="tap-hint" id="tap-hint">нажми чтобы увидеть перевод</div>
   </div>
-  <h3 style="font-size:12px;color:var(--muted);margin-bottom:1rem;font-family:'Unbounded',sans-serif;font-weight:400;">ЧАСТЫЕ ОШИБКИ</h3>
-  <div id="ml"></div>
-  <div style="margin-top:1.5rem;"><button class="btn-d" onclick="clrStats()">Очистить статистику</button></div>
-</div>
-
-<div class="overlay" id="ov">
-  <div class="modal">
-    <h3 id="etitle">Новый список</h3>
-    <input type="text" id="ename" placeholder="Название (напр: Урок 1)">
-    <textarea id="ewords" placeholder="кот = cat&#10;собака = dog&#10;&#10;Или вставь из таблицы (Tab)"></textarea>
-    <div class="hint">Формат: <b>слово = word</b> или Tab-разделитель (Excel, Google Sheets)</div>
-    <div class="mact">
-      <button class="btn-g" onclick="closeEd()">Отмена</button>
-      <button class="btn-a" onclick="saveL()">Сохранить</button>
-    </div>
+  <div class="bottom-btns">
+    <button class="bbtn" onclick="goPrev()">
+      <div class="bbtn-icon">&#9664;</div>
+      <div class="bbtn-label">Назад</div>
+    </button>
+    <button class="bbtn center" onclick="goNext()">
+      <div class="bbtn-icon">&#9654;</div>
+      <div class="bbtn-label">Далее</div>
+    </button>
+    <button class="bbtn stop-btn" onclick="goHome()">
+      <div class="bbtn-icon">&#9209;</div>
+      <div class="bbtn-label">Стоп</div>
+    </button>
   </div>
 </div>
 
 <script>
 var LS = localStorage;
-var lists = JSON.parse(LS.getItem('vt2_lists') || '[]');
-var ST = JSON.parse(LS.getItem('vt2_stats') || '{"s":0,"t":0,"c":0,"m":{}}');
+var lists = JSON.parse(LS.getItem('vt3_lists') || '[]');
+var actId = LS.getItem('vt3_act') || null;
 var editId = null;
-var loopOn = false;
-var keyHandler = null;
-var actId = LS.getItem('vt2_act') || null;
 var words = [];
-var wi = 0, okN = 0, erN = 0, totN = 0;
-var tmr = null;
-var done = false;
-var md = 'ru-en';
+var wi = 0;
+var trMode = 'ru-en';
+var revealed = false;
 
-function saveLists() { LS.setItem('vt2_lists', JSON.stringify(lists)); }
-function saveStats() { LS.setItem('vt2_stats', JSON.stringify(ST)); }
+function saveLists() { LS.setItem('vt3_lists', JSON.stringify(lists)); }
 
-function goTab(n) {
-  document.getElementById('p-lists').style.display = n==='lists' ? '' : 'none';
-  document.getElementById('p-trainer').style.display = n==='trainer' ? '' : 'none';
-  document.getElementById('p-stats').style.display = n==='stats' ? '' : 'none';
-  var ts = document.querySelectorAll('.tab');
-  var ns = ['lists','trainer','stats'];
-  for (var i=0;i<ts.length;i++) ts[i].classList.toggle('active', ns[i]===n);
-  if (n==='trainer') rebuildSel();
-  if (n==='stats') showStats();
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
+  document.getElementById(id).classList.add('active');
+  if (id === 's-lists') renderLists();
 }
 
+// ---- PARSE ----
 function parseW(text) {
-  var lines = text.trim().split('\n');
   var res = [];
-  for (var i=0;i<lines.length;i++) {
+  var lines = text.trim().split('\n');
+  for (var i = 0; i < lines.length; i++) {
     var ln = lines[i].trim();
     if (!ln) continue;
-    var p;
-    if (ln.indexOf('\t') >= 0) p = ln.split('\t');
-    else p = ln.split('=');
+    var p = ln.indexOf('\t') >= 0 ? ln.split('\t') : ln.split('=');
     if (p.length >= 2 && p[0].trim() && p[1].trim()) res.push([p[0].trim(), p[1].trim()]);
   }
   return res;
 }
-
 function cntW(text) { return parseW(text).length; }
-
 function getList(id) { for (var i=0;i<lists.length;i++) if (lists[i].id===id) return lists[i]; return null; }
+function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
+// ---- LISTS ----
 function renderLists() {
-  var c = document.getElementById('lc');
-  if (!lists.length) { c.innerHTML = '<div class="empty"><span>&#128221;</span>Нет списков. Создай первый!</div>'; return; }
-  var h = '';
-  for (var i=0;i<lists.length;i++) {
-    var l = lists[i];
-    var s = actId===l.id ? ' sel' : '';
-    h += '<div class="list-card' + s + '" onclick="actList(\'' + l.id + '\')">';
-    h += '<div style="flex:1"><div class="lname">' + esc(l.name) + '</div><div class="lcnt">' + cntW(l.text) + ' слов</div></div>';
-    h += '<button class="btn-g" onclick="event.stopPropagation();openEd(\'' + l.id + '\')">&#9998;</button> ';
-    h += '<button class="btn-d" onclick="event.stopPropagation();delList(\'' + l.id + '\')">&#128465;</button>';
-    h += '</div>';
+  var b = document.getElementById('lists-body');
+  if (!lists.length) {
+    b.innerHTML = '<div class="empty-hint"><span>&#128221;</span>Нет списков.<br>Создай первый!</div>';
+    return;
   }
-  c.innerHTML = h;
+  var h = '';
+  for (var i = 0; i < lists.length; i++) {
+    var l = lists[i];
+    var cls = actId === l.id ? ' active-list' : '';
+    h += '<div class="list-item' + cls + '">';
+    h += '<div class="li-info" onclick="actList(\'' + l.id + '\')">';
+    h += '<div class="li-name">' + esc(l.name) + '</div>';
+    h += '<div class="li-cnt">' + cntW(l.text) + ' слов</div></div>';
+    h += '<div class="li-btns">';
+    h += '<button onclick="openEditor(\'' + l.id + '\')">&#9998;</button>';
+    h += '<button onclick="delList(\'' + l.id + '\')" style="color:var(--err)">&#128465;</button>';
+    h += '</div></div>';
+  }
+  b.innerHTML = h;
 }
 
-function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function actList(id) {
+  actId = id; LS.setItem('vt3_act', id); renderLists();
+}
 
-function actList(id) { actId = id; LS.setItem('vt2_act', id); renderLists(); }
-
-function openEd(id) {
+function openEditor(id) {
   editId = id;
   var l = id ? getList(id) : null;
-  document.getElementById('etitle').textContent = id ? 'Редактировать список' : 'Новый список';
-  document.getElementById('ename').value = l ? l.name : '';
-  document.getElementById('ewords').value = l ? l.text : '';
-  document.getElementById('ov').classList.add('open');
+  document.getElementById('ed-title').textContent = id ? 'Редактировать' : 'Новый список';
+  document.getElementById('ed-name').value = l ? l.name : '';
+  document.getElementById('ed-words').value = l ? l.text : '';
+  showScreen('s-editor');
 }
 
-function closeEd() { document.getElementById('ov').classList.remove('open'); }
-
-function saveL() {
-  var name = document.getElementById('ename').value.trim() || 'Без названия';
-  var text = document.getElementById('ewords').value.trim();
-  if (!text) { alert('Добавь хотя бы одно слово!'); return; }
+function saveList() {
+  var name = document.getElementById('ed-name').value.trim() || 'Без названия';
+  var text = document.getElementById('ed-words').value.trim();
+  if (!text) { alert('Добавь слова!'); return; }
   if (editId) {
-    var l = getList(editId);
-    if (l) { l.name = name; l.text = text; }
+    var l = getList(editId); if (l) { l.name = name; l.text = text; }
   } else {
     var nid = 'L' + Date.now();
     lists.push({ id: nid, name: name, text: text });
-    if (!actId) { actId = nid; LS.setItem('vt2_act', actId); }
+    if (!actId) { actId = nid; LS.setItem('vt3_act', actId); }
   }
   saveLists();
-  closeEd();
-  renderLists();
-  rebuildSel();
+  showScreen('s-lists');
 }
 
 function delList(id) {
-  if (!confirm('Удалить список?')) return;
+  if (!confirm('Удалить?')) return;
   lists = lists.filter(function(l) { return l.id !== id; });
-  if (actId === id) { actId = lists.length ? lists[0].id : null; LS.setItem('vt2_act', actId||''); }
-  saveLists();
-  renderLists();
-  rebuildSel();
+  if (actId === id) { actId = lists.length ? lists[0].id : null; LS.setItem('vt3_act', actId||''); }
+  saveLists(); renderLists();
 }
 
-function rebuildSel() {
-  var sel = document.getElementById('lsel');
-  if (!sel) return;
-  if (!lists.length) { sel.innerHTML = '<option>Нет списков</option>'; return; }
-  var h = '';
-  for (var i=0;i<lists.length;i++) {
-    var l = lists[i];
-    h += '<option value="' + l.id + '"' + (l.id===actId?' selected':'') + '>' + esc(l.name) + ' (' + cntW(l.text) + ')</option>';
-  }
-  sel.innerHTML = h;
-}
-
-function onSel() { actId = document.getElementById('lsel').value; LS.setItem('vt2_act', actId); }
-
-function setM(m, idx) {
-  md = m;
-  for (var i=0;i<3;i++) document.getElementById('mb'+i).classList.toggle('active', i===idx);
-}
-
+// ---- TRAINER ----
 function shuf(a) {
   var b = a.slice();
   for (var i=b.length-1;i>0;i--) { var j=Math.floor(Math.random()*(i+1)); var t=b[i]; b[i]=b[j]; b[j]=t; }
@@ -278,216 +323,77 @@ function buildWords() {
   var l = getList(actId);
   if (!l) return [];
   var p = parseW(l.text);
-  if (md==='en-ru') p = p.map(function(x){return [x[1],x[0]];});
-  else if (md==='both') p = p.concat(p.map(function(x){return [x[1],x[0]];}));
-  if (document.getElementById('shuf').checked) p = shuf(p);
-  return p;
+  if (trMode === 'en-ru') p = p.map(function(x){return [x[1],x[0]];});
+  else if (trMode === 'both') p = p.concat(p.map(function(x){return [x[1],x[0]];}));
+  return shuf(p);
 }
 
-function startT() {
-  if (!actId) { document.getElementById('tc').innerHTML = '<div class="empty"><span>&#128218;</span>Выбери список</div>'; return; }
+function startTrainer() {
+  if (!actId) { alert('Выбери список!'); return; }
   words = buildWords();
-  if (!words.length) return;
-  wi=0; okN=0; erN=0; totN=0; done=false;
-  clearTimeout(tmr);
-  loopOn = document.getElementById('loop').checked;
-  ST.s++; saveStats();
-  buildUI();
-  nextWord();
-  setupKeys();
+  if (!words.length) { alert('В списке нет слов!'); return; }
+  wi = 0; revealed = false;
+  var l = getList(actId);
+  document.getElementById('t-listname').textContent = l ? l.name : '';
+  showScreen('s-trainer');
+  showWord();
 }
 
-function buildUI() {
-  var h = '<div class="pwrap"><div class="pbar" id="pb"></div></div>';
-  h += '<div class="tw" id="tw"></div>';
-  h += '<div class="ts" id="ts"></div>';
-  h += '<input id="ainput" type="text" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="напиши перевод...">';
-  h += '<div id="fb"></div>';
-  h += '<div class="srow" style="margin-top:1rem;">';
-  h += '<div class="sbox"><div class="sv ok-c" id="sok">0</div><div class="sl">верно</div></div>';
-  h += '<div class="sbox"><div class="sv" id="stot">0</div><div class="sl">всего</div></div>';
-  h += '<div class="sbox"><div class="sv er-c" id="ser">0</div><div class="sl">ошибок</div></div>';
-  h += '</div>';
-  h += '<div class="srow" style="margin-top:8px;">';
-  h += '<div class="sbox cl" onclick="doStop()"><div class="sv" style="font-size:15px;">&#9209;</div><div class="sl">Стоп</div></div>';
-  h += '<div class="sbox cl" onclick="doSkip()"><div class="sv" style="font-size:15px;">&#9197;</div><div class="sl">Пропустить</div></div>';
-  h += '<div class="sbox cl" onclick="startT()"><div class="sv" style="font-size:15px;">&#8635;</div><div class="sl">Заново</div></div>';
-  h += '</div>';
-
-  document.getElementById('tc').innerHTML = h;
-  var inp = document.getElementById('ainput');
-  inp.addEventListener('input', onInp);
+function showWord() {
+  revealed = false;
+  document.getElementById('card-word').textContent = words[wi][0];
+  document.getElementById('card-tr').textContent = words[wi][1];
+  document.getElementById('card-tr').classList.remove('show');
+  document.getElementById('tap-hint').classList.remove('hidden');
+  document.getElementById('t-prog').textContent = (wi+1) + ' / ' + words.length;
+  document.getElementById('pbar').style.width = Math.round((wi+1)/words.length*100) + '%';
 }
 
-function nextWord() {
-  if (wi >= words.length) { finish(); return; }
-  done = false;
-  clearTimeout(tmr);
-  var inp = document.getElementById('ainput');
-  var fb = document.getElementById('fb');
-  if (inp) { inp.value=''; inp.className=''; inp.disabled=false; }
-  if (fb) { fb.textContent=''; fb.className=''; }
-  document.getElementById('tw').textContent = words[wi][0];
-  document.getElementById('ts').textContent = (wi+1) + ' / ' + words.length;
-  document.getElementById('pb').style.width = Math.round(wi/words.length*100) + '%';
-  updBoxes();
-  if (inp && inp.style.display !== 'none') inp.focus();
+function showTranslation() {
+  if (revealed) return;
+  revealed = true;
+  document.getElementById('card-tr').classList.add('show');
+  document.getElementById('tap-hint').classList.add('hidden');
 }
 
-function norm(s) { return s.trim().toLowerCase().replace(/ё/g,'е'); }
-
-function onInp() {
-  if (done) return;
-  clearTimeout(tmr);
-  var inp = document.getElementById('ainput');
-  var typed = norm(inp.value);
-  var tgt = norm(words[wi][1]);
-  if (!typed) { inp.className=''; setFb('',''); return; }
-  if (typed === tgt) {
-    inp.className='cor'; setFb('&#10003; верно!','ok');
-    done=true; okN++; totN++; ST.c++; ST.t++;
-    updBoxes(); saveStats();
-    tmr = setTimeout(function(){wi++;nextWord();}, 800);
-  } else if (tgt.indexOf(typed)===0) {
-    inp.className=''; setFb('...продолжай','');
-  } else {
-    inp.className='wrg'; setFb('&#10007; не то...','er');
-    tmr = setTimeout(function(){
-      if (!done) {
-        done=true;
-        var ans = words[wi][1];
-        var inp2 = document.getElementById('ainput');
-        if (inp2) { inp2.value=ans; inp2.className='cor'; inp2.disabled=true; }
-        setFb('', '');
-        erN++; totN++; ST.t++;
-        addM(words[wi][0]); updBoxes(); saveStats();
-        tmr = setTimeout(function(){wi++;nextWord();}, 1800);
-      }
-    }, 1400);
-  }
-}
-
-function doSkip() {
-  clearTimeout(tmr);
-  if (!done) {
-    done=true;
-    var ans = words[wi][1];
-    var inp = document.getElementById('ainput');
-    if (inp) { inp.value=ans; inp.className='cor'; inp.disabled=true; }
-    setFb('', '');
-    erN++; totN++; ST.t++;
-    addM(words[wi][0]); updBoxes(); saveStats();
-    tmr = setTimeout(function(){wi++;nextWord();}, 1600);
-  }
-}
-
-function doStop() {
-  clearTimeout(tmr);
-  loopOn = false;
-  document.getElementById('loop').checked = false;
-  removeKeys();
-  document.getElementById('tc').innerHTML = '<div class="empty"><span>&#9209;</span>Тренировка остановлена</div>';
-}
-
-function showCA(ans) {
-  var ca = document.getElementById('cans');
-  if (ca) { ca.style.display='block'; ca.textContent=ans; }
-}
-
-function addM(w) { ST.m[w] = (ST.m[w]||0)+1; }
-
-function setFb(html, cls) {
-  var fb = document.getElementById('fb');
-  if (!fb) return;
-  fb.innerHTML=html; fb.className=cls;
-}
-
-function updBoxes() {
-  var ok=document.getElementById('sok');
-  var tot=document.getElementById('stot');
-  var er=document.getElementById('ser');
-  if (ok) ok.textContent=okN;
-  if (tot) tot.textContent=totN;
-  if (er) er.textContent=erN;
-}
-
-function finish() {
-  loopOn = document.getElementById('loop') ? document.getElementById('loop').checked : loopOn;
-  if (loopOn) {
+function goNext() {
+  wi++;
+  if (wi >= words.length) {
     words = buildWords();
-    wi=0; done=false; nextWord(); return;
+    wi = 0;
   }
-  var pct = totN ? Math.round(okN/totN*100) : 0;
-  var em = pct>=80 ? '&#127881;' : pct>=50 ? '&#128170;' : '&#128218;';
-  var ttl = pct>=80 ? 'Отлично!' : pct>=50 ? 'Хорошо!' : 'Надо повторить!';
-  var h = '<div class="fin"><div class="em">' + em + '</div><h2>' + ttl + '</h2>';
-  h += '<p>' + okN + ' из ' + totN + ' верно &mdash; ' + pct + '% точность</p>';
-  h += '<div style="display:flex;gap:8px;justify-content:center;">';
-  h += '<button class="btn-a" onclick="startT()">Ещё раз</button>';
-  h += '<button class="btn-g" onclick="goTab(\'stats\')">Статистика</button>';
-  h += '</div></div>';
-  document.getElementById('tc').innerHTML = h;
-  document.getElementById('pb').style.width='100%';
-}
-
-function showStats() {
-  document.getElementById('ss').textContent = ST.s;
-  document.getElementById('sw').textContent = ST.t;
-  document.getElementById('sc').textContent = ST.c;
-  var pct = ST.t ? Math.round(ST.c/ST.t*100) : 0;
-  document.getElementById('sp').textContent = pct + '%';
-  var ms = [];
-  for (var k in ST.m) ms.push([k, ST.m[k]]);
-  ms.sort(function(a,b){return b[1]-a[1];});
-  ms = ms.slice(0,15);
-  var ml = document.getElementById('ml');
-  if (!ms.length) { ml.innerHTML = '<div style="color:var(--muted);font-size:14px;padding:1rem 0;">Ошибок пока нет &#127881;</div>'; return; }
-  var h = '';
-  for (var i=0;i<ms.length;i++) h += '<div class="mi"><span class="miru">' + esc(ms[i][0]) + '</span><span class="mico">' + ms[i][1] + 'x</span></div>';
-  ml.innerHTML = h;
-}
-
-function clrStats() {
-  if (!confirm('Очистить?')) return;
-  ST = {s:0,t:0,c:0,m:{}};
-  saveStats(); showStats();
-}
-
-// Init
-if (!lists.length) {
-  lists.push({id:'demo', name:'Урок 1 — To be', text:'я = I\nты = you\nон = he\nона = she\nмы = we\nони = they\nстудент = student\nучитель = teacher\nдом = house\nкнига = book\nкошка = cat\nсобака = dog'});
-  actId='demo';
-  saveLists();
-  LS.setItem('vt2_act','demo');
-}
-renderLists();
-rebuildSel();
-
-function setupKeys() {
-  removeKeys();
-  keyHandler = function(e) {
-    if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
-      e.preventDefault();
-      doSkip();
-    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
-      e.preventDefault();
-      goPrev();
-    }
-  };
-  document.addEventListener('keydown', keyHandler);
-}
-
-function removeKeys() {
-  if (keyHandler) { document.removeEventListener('keydown', keyHandler); keyHandler = null; }
+  showWord();
 }
 
 function goPrev() {
-  if (wi <= 0) return;
-  clearTimeout(tmr);
-  done = false;
-  wi--;
-  nextWord();
+  if (wi > 0) { wi--; showWord(); }
 }
+
+function goHome() {
+  showScreen('s-lists');
+}
+
+function setMode(m, idx) {
+  trMode = m;
+  for (var i=0;i<3;i++) document.getElementById('mb'+i).classList.toggle('on', i===idx);
+  if (words.length) { words = buildWords(); wi=0; showWord(); }
+}
+
+// keyboard support
+document.addEventListener('keydown', function(e) {
+  var s = document.querySelector('.screen.active');
+  if (!s || s.id !== 's-trainer') return;
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); goNext(); }
+  else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); goPrev(); }
+  else if (e.key === ' ') { e.preventDefault(); showTranslation(); }
+});
+
+// Init
+if (!lists.length) {
+  lists.push({id:'demo', name:'Урок 1', text:'я = I\nты = you\nон = he\nона = she\nмы = we\nони = they\nстудент = student\nучитель = teacher\nдом = house\nкнига = book\nкошка = cat\nсобака = dog'});
+  actId='demo'; saveLists(); LS.setItem('vt3_act','demo');
+}
+renderLists();
 </script>
 </body>
 </html>
