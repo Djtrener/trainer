@@ -7,144 +7,180 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>Слова</title>
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-:root { --bg:#0f0f0f; --sur:#1a1a1a; --sur2:#242424; --brd:#2e2e2e; --txt:#f0f0f0; --mut:#666; --acc:#c8f135; --ok:#3ecf8e; --err:#ff5c5c; }
-html, body { height:100%; width:100%; background:var(--bg); color:var(--txt); font-family:-apple-system,sans-serif; overflow:hidden; }
+* { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+:root { --bg:#0f0f0f; --sur:#1c1c1c; --sur2:#272727; --brd:#333; --txt:#f0f0f0; --mut:#666; --acc:#c8f135; --ok:#3ecf8e; }
+html,body { height:100%; width:100%; background:var(--bg); color:var(--txt); font-family:-apple-system,sans-serif; overflow:hidden; }
 
-.screen { display:none; height:100dvh; width:100%; flex-direction:column; }
-.screen.on { display:flex; }
+.sc { display:none; height:100dvh; width:100%; flex-direction:column; }
+.sc.on { display:flex; }
 
-/* LISTS */
+/* ── LISTS SCREEN ── */
 .lhdr { padding:1rem 1.2rem; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--brd); background:var(--sur); flex-shrink:0; }
 .lhdr h1 { font-size:18px; font-weight:800; color:var(--acc); }
-.btn-new { background:var(--acc); color:#0f0f0f; border:none; border-radius:20px; padding:9px 18px; font-size:14px; font-weight:700; cursor:pointer; }
+.anew { background:var(--acc); color:#0f0f0f; border:none; border-radius:20px; padding:9px 18px; font-size:14px; font-weight:700; cursor:pointer; }
 .lbody { flex:1; overflow-y:auto; padding:1rem; min-height:0; }
 .litem { background:var(--sur); border:1px solid var(--brd); border-radius:14px; padding:1rem 1.2rem; margin-bottom:10px; display:flex; align-items:center; gap:10px; }
 .litem.sel { border-color:var(--acc); }
-.linfo { flex:1; cursor:pointer; }
-.lname { font-size:16px; font-weight:600; }
-.lcnt { font-size:12px; color:var(--mut); margin-top:2px; }
-.libts { display:flex; gap:8px; }
-.libts button { background:var(--sur2); border:1px solid var(--brd); border-radius:10px; color:var(--mut); font-size:18px; width:40px; height:40px; cursor:pointer; }
+.linf { flex:1; cursor:pointer; }
+.lnm { font-size:16px; font-weight:600; }
+.lct { font-size:12px; color:var(--mut); margin-top:2px; }
+.lbts { display:flex; gap:8px; }
+.lbts button { background:var(--sur2); border:1px solid var(--brd); border-radius:10px; color:var(--mut); font-size:18px; width:40px; height:40px; cursor:pointer; }
 .empty { text-align:center; color:var(--mut); padding:3rem 1rem; font-size:15px; }
 .empty span { display:block; font-size:40px; margin-bottom:10px; }
+.sarea { height:33dvh; min-height:120px; max-height:200px; display:flex; align-items:center; justify-content:center; padding:8px; padding-bottom:calc(8px + env(safe-area-inset-bottom,0px)); flex-shrink:0; }
+.sbtn { background:var(--sur); border:1px solid var(--brd); border-radius:22px; width:calc(33dvh - 16px); height:calc(33dvh - 16px); max-width:190px; max-height:190px; min-width:100px; min-height:100px; font-size:15px; font-weight:700; cursor:pointer; color:var(--txt); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; }
+.sbtn:active { background:var(--sur2); transform:scale(0.95); }
+.sbtn-ic { font-size:34px; color:var(--acc); }
 
-/* START BUTTON AREA */
-.start-area { height:33dvh; min-height:130px; max-height:210px; display:flex; align-items:center; justify-content:center; padding:8px; flex-shrink:0; padding-bottom:calc(8px + env(safe-area-inset-bottom,0px)); }
-.start-btn { background:var(--acc); color:#0f0f0f; border:none; border-radius:22px; width:calc(33dvh - 16px); height:calc(33dvh - 16px); max-width:200px; max-height:200px; min-width:110px; min-height:110px; font-size:16px; font-weight:800; cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; }
-.start-btn:active { transform:scale(0.95); }
-.start-icon { font-size:38px; }
-
-/* EDITOR */
+/* ── EDITOR ── */
 .ehdr { padding:1rem 1.2rem; display:flex; align-items:center; gap:12px; border-bottom:1px solid var(--brd); background:var(--sur); flex-shrink:0; }
-.back { background:none; border:none; color:var(--mut); font-size:24px; cursor:pointer; padding:0 4px; }
+.eback { background:none; border:none; color:var(--mut); font-size:24px; cursor:pointer; }
 .ehdr h2 { font-size:16px; font-weight:600; flex:1; }
-.save { background:var(--acc); color:#0f0f0f; border:none; border-radius:20px; padding:8px 18px; font-size:14px; font-weight:700; cursor:pointer; }
+.esave { background:var(--acc); color:#0f0f0f; border:none; border-radius:20px; padding:8px 18px; font-size:14px; font-weight:700; cursor:pointer; }
 .ebody { flex:1; padding:1rem; display:flex; flex-direction:column; gap:10px; overflow-y:auto; }
-.ebody input, .ebody textarea { background:var(--sur); border:1px solid var(--brd); border-radius:12px; padding:12px 14px; font-size:14px; color:var(--txt); outline:none; width:100%; }
-.ebody input:focus, .ebody textarea:focus { border-color:var(--acc); }
-.ebody textarea { height:55vh; resize:none; font-family:monospace; line-height:1.9; }
+.ebody input,.ebody textarea { background:var(--sur); border:1px solid var(--brd); border-radius:12px; padding:12px 14px; font-size:14px; color:var(--txt); outline:none; width:100%; }
+.ebody input:focus,.ebody textarea:focus { border-color:var(--acc); }
+.ebody textarea { height:52vh; resize:none; font-family:monospace; line-height:1.9; }
 .ehint { font-size:11px; color:var(--mut); }
 
-/* TRAINER */
-.thdr { padding:0.8rem 1.2rem 0.4rem; display:flex; justify-content:space-between; align-items:center; flex-shrink:0; }
-.tname { font-size:13px; color:var(--mut); }
-.tprog { font-size:13px; color:var(--mut); }
-.pwrap { height:2px; background:var(--sur2); margin:0 1.2rem 0; flex-shrink:0; border-radius:2px; overflow:hidden; }
-.pbar { height:100%; background:var(--acc); border-radius:2px; transition:width 0.3s; }
+/* ── TRAINER ── */
 
+/* top 4 buttons */
+.top4 { display:flex; gap:6px; padding:8px 8px 0; flex-shrink:0; }
+.t4btn { flex:1; aspect-ratio:1; background:var(--sur); border:1px solid var(--brd); border-radius:14px; cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; max-height:72px; }
+.t4btn:active { background:var(--sur2); transform:scale(0.95); }
+.t4btn.on { border-color:var(--acc); }
+.t4btn.on .t4lb { color:var(--acc); }
+.t4ic { font-size:18px; color:var(--mut); }
+.t4lb { font-size:10px; color:var(--mut); font-weight:600; text-align:center; line-height:1.2; }
+.t4btn.on .t4ic { color:var(--acc); }
+.t4btn.stop .t4ic { color:#ff5c5c; }
+.t4btn.stop .t4lb { color:#ff5c5c; }
+
+/* options row */
+.opts { display:flex; gap:16px; padding:8px 12px 0; flex-shrink:0; }
+.ck { display:flex; align-items:center; gap:6px; font-size:13px; color:var(--mut); cursor:pointer; }
+input[type=checkbox] { accent-color:var(--acc); width:16px; height:16px; }
+
+/* progress */
+.pwrap { height:2px; background:var(--sur2); margin:8px 12px 0; flex-shrink:0; border-radius:2px; overflow:hidden; }
+.pbar { height:100%; background:var(--acc); border-radius:2px; transition:width 0.3s; }
+.tprog { text-align:right; font-size:12px; color:var(--mut); padding:4px 12px 0; flex-shrink:0; }
+
+/* card */
 .card { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:1rem 1.5rem; min-height:0; overflow:hidden; }
-.cword { font-size:clamp(28px,9vw,52px); font-weight:800; text-align:center; color:var(--txt); letter-spacing:-1px; line-height:1.1; margin-bottom:1.2rem; }
-.ctr { font-size:clamp(20px,6vw,34px); font-weight:500; text-align:center; color:var(--ok); min-height:1.5em; opacity:0; transition:opacity 0.2s; line-height:1.3; }
-.ctr.show { opacity:1; }
-.chint { font-size:13px; color:var(--mut); margin-top:1.2rem; }
+.cword { font-size:clamp(48px,14vw,86px); font-weight:800; text-align:center; color:var(--txt); letter-spacing:-1px; line-height:1.1; margin-bottom:1.2rem; }
+.ctr { font-size:clamp(30px,9vw,56px); font-weight:500; text-align:center; color:var(--ok); min-height:1.4em; visibility:hidden; transition:none; line-height:1.3; }
+.ctr.show { visibility:visible; }
+.chint { font-size:14px; color:var(--mut); margin-top:1rem; }
 .chint.hide { opacity:0; }
 
-/* BOTTOM 3 BUTTONS */
-.bbtns { display:flex; gap:8px; padding:8px; padding-bottom:calc(8px + env(safe-area-inset-bottom,0px)); height:33dvh; min-height:130px; max-height:210px; flex-shrink:0; }
-.bb { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; background:var(--sur); border:1px solid var(--brd); border-radius:20px; cursor:pointer; gap:8px; transition:background 0.1s; }
-.bb:active { background:var(--sur2); transform:scale(0.96); }
-.bb-ic { font-size:34px; line-height:1; }
-.bb-lb { font-size:13px; color:var(--mut); font-weight:600; }
-.bb.mid { background:var(--acc); border-color:var(--acc); flex:1.3; }
-.bb.mid .bb-ic { color:#0f0f0f; font-size:40px; }
-.bb.mid .bb-lb { color:#1a2000; font-weight:700; font-size:14px; }
-.bb.mid:active { opacity:0.88; transform:scale(0.96); }
-.bb.stp .bb-ic { color:var(--err); }
+/* bottom 2 buttons */
+.bot2 { display:flex; gap:8px; padding:8px; padding-bottom:calc(8px + env(safe-area-inset-bottom,0px)); flex-shrink:0; }
+.b2btn { flex:1; aspect-ratio:1; background:var(--sur); border:1px solid var(--brd); border-radius:20px; cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; max-height:130px; }
+.b2btn:active { background:var(--sur2); transform:scale(0.96); }
+.b2ic { font-size:36px; color:var(--mut); line-height:1; }
+.b2lb { font-size:13px; color:var(--mut); font-weight:600; }
 </style>
 </head>
 <body>
 
 <!-- LISTS -->
-<div class="screen on" id="sc-lists">
+<div class="sc on" id="sc-lists">
   <div class="lhdr">
     <h1>&#127351; СЛОВА</h1>
-    <button class="btn-new" onclick="openEd(null)">+ Список</button>
+    <button class="anew" onclick="openEd(null)">+ Список</button>
   </div>
   <div class="lbody" id="lbody"></div>
-  <div class="start-area">
-    <button class="start-btn" onclick="startT()">
-      <div class="start-icon">&#9654;</div>
+  <div class="sarea">
+    <button class="sbtn" onclick="startT()">
+      <div class="sbtn-ic">&#9654;</div>
       Начать
     </button>
   </div>
 </div>
 
 <!-- EDITOR -->
-<div class="screen" id="sc-ed">
+<div class="sc" id="sc-ed">
   <div class="ehdr">
-    <button class="back" onclick="goSc('sc-lists')">&#8592;</button>
+    <button class="eback" onclick="goSc('sc-lists')">&#8592;</button>
     <h2 id="etitle">Новый список</h2>
-    <button class="save" onclick="saveL()">Сохранить</button>
+    <button class="esave" onclick="saveL()">Сохранить</button>
   </div>
   <div class="ebody">
     <input type="text" id="ename" placeholder="Название (напр: Урок 1)">
     <textarea id="ewords" placeholder="кот = cat&#10;собака = dog&#10;&#10;Или вставь из таблицы (Tab)"></textarea>
-    <div class="ehint">Формат: слово = word &nbsp;|&nbsp; или Tab (из Excel / Google Sheets)</div>
+    <div class="ehint">Формат: слово = word &nbsp;|&nbsp; Tab (из Excel / Google Sheets)</div>
   </div>
 </div>
 
 <!-- TRAINER -->
-<div class="screen" id="sc-train">
-  <div class="thdr">
-    <span class="tname" id="tname"></span>
-    <span class="tprog" id="tprog"></span>
+<div class="sc" id="sc-train">
+  <!-- top 4 buttons -->
+  <div class="top4">
+    <button class="t4btn on" id="mb0" onclick="setMd('ru-en',0)">
+      <div class="t4ic">RU</div>
+      <div class="t4lb">&#8594; EN</div>
+    </button>
+    <button class="t4btn" id="mb1" onclick="setMd('en-ru',1)">
+      <div class="t4ic">EN</div>
+      <div class="t4lb">&#8594; RU</div>
+    </button>
+    <button class="t4btn" id="mb2" onclick="setMd('both',2)">
+      <div class="t4ic">&#8644;</div>
+      <div class="t4lb">Оба</div>
+    </button>
+    <button class="t4btn stop" onclick="goSc('sc-lists')">
+      <div class="t4ic">&#9209;</div>
+      <div class="t4lb">Стоп</div>
+    </button>
   </div>
+
+  <!-- checkboxes -->
+  <div class="opts">
+    <label class="ck"><input type="checkbox" id="shuf" checked> перемешать</label>
+    <label class="ck"><input type="checkbox" id="loop" checked> &#128260; цикл</label>
+  </div>
+
+  <!-- progress -->
   <div class="pwrap"><div class="pbar" id="pbar"></div></div>
-  <div class="card" id="card">
+  <div class="tprog" id="tprog">1 / 1</div>
+
+  <!-- card -->
+  <div class="card">
     <div class="cword" id="cword"></div>
     <div class="ctr" id="ctr"></div>
     <div class="chint" id="chint">нажми &#9654; Далее</div>
   </div>
-  <div class="bbtns">
-    <button class="bb" onclick="goPrev()">
-      <div class="bb-ic">&#9664;</div>
-      <div class="bb-lb">Назад</div>
+
+  <!-- bottom 2 buttons -->
+  <div class="bot2">
+    <button class="b2btn" onclick="goPrev()">
+      <div class="b2ic">&#9664;</div>
+      <div class="b2lb">Назад</div>
     </button>
-    <button class="bb mid" onclick="goNext()">
-      <div class="bb-ic" id="nic">&#9654;</div>
-      <div class="bb-lb" id="nlb">Далее</div>
-    </button>
-    <button class="bb stp" onclick="goHome()">
-      <div class="bb-ic">&#9209;</div>
-      <div class="bb-lb">Стоп</div>
+    <button class="b2btn" onclick="goNext()" id="nbtn">
+      <div class="b2ic" id="nic">&#9654;</div>
+      <div class="b2lb" id="nlb">Далее</div>
     </button>
   </div>
 </div>
 
 <script>
 var LS = localStorage;
-var lists = JSON.parse(LS.getItem('vt4_lists') || '[]');
-var actId = LS.getItem('vt4_act') || null;
+var lists = JSON.parse(LS.getItem('vt5_lists') || '[]');
+var actId = LS.getItem('vt5_act') || null;
 var editId = null;
 var words = [];
 var wi = 0;
 var revealed = false;
+var md = 'ru-en';
 
-function saveLists() { LS.setItem('vt4_lists', JSON.stringify(lists)); }
+function saveLists() { LS.setItem('vt5_lists', JSON.stringify(lists)); }
 
 function goSc(id) {
-  var ss = document.querySelectorAll('.screen');
+  var ss = document.querySelectorAll('.sc');
   for (var i = 0; i < ss.length; i++) ss[i].classList.remove('on');
   document.getElementById(id).classList.add('on');
   if (id === 'sc-lists') renderLists();
@@ -157,40 +193,34 @@ function parseW(text) {
     var ln = lines[i].trim();
     if (!ln) continue;
     var p = ln.indexOf('\t') >= 0 ? ln.split('\t') : ln.split('=');
-    if (p.length >= 2 && p[0].trim() && p[1].trim()) {
-      res.push([p[0].trim(), p[1].trim()]);
-    }
+    if (p.length >= 2 && p[0].trim() && p[1].trim()) res.push([p[0].trim(), p[1].trim()]);
   }
   return res;
 }
 
 function cntW(t) { return parseW(t).length; }
-function getL(id) { for (var i = 0; i < lists.length; i++) if (lists[i].id === id) return lists[i]; return null; }
+function getL(id) { for (var i=0;i<lists.length;i++) if (lists[i].id===id) return lists[i]; return null; }
 function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
 function renderLists() {
   var b = document.getElementById('lbody');
-  if (!lists.length) {
-    b.innerHTML = '<div class="empty"><span>&#128221;</span>Нет списков.<br>Создай первый!</div>';
-    return;
-  }
+  if (!lists.length) { b.innerHTML = '<div class="empty"><span>&#128221;</span>Нет списков.<br>Создай первый!</div>'; return; }
   var h = '';
   for (var i = 0; i < lists.length; i++) {
     var l = lists[i];
-    var s = actId === l.id ? ' sel' : '';
-    h += '<div class="litem' + s + '">';
-    h += '<div class="linfo" onclick="actL(\'' + l.id + '\')">';
-    h += '<div class="lname">' + esc(l.name) + '</div>';
-    h += '<div class="lcnt">' + cntW(l.text) + ' слов</div></div>';
-    h += '<div class="libts">';
+    h += '<div class="litem' + (actId===l.id?' sel':'') + '">';
+    h += '<div class="linf" onclick="actL(\'' + l.id + '\')">';
+    h += '<div class="lnm">' + esc(l.name) + '</div>';
+    h += '<div class="lct">' + cntW(l.text) + ' слов</div></div>';
+    h += '<div class="lbts">';
     h += '<button onclick="openEd(\'' + l.id + '\')">&#9998;</button>';
-    h += '<button style="color:var(--err)" onclick="delL(\'' + l.id + '\')">&#128465;</button>';
+    h += '<button style="color:#ff5c5c" onclick="delL(\'' + l.id + '\')">&#128465;</button>';
     h += '</div></div>';
   }
   b.innerHTML = h;
 }
 
-function actL(id) { actId = id; LS.setItem('vt4_act', id); renderLists(); }
+function actL(id) { actId = id; LS.setItem('vt5_act', id); renderLists(); }
 
 function openEd(id) {
   editId = id;
@@ -206,39 +236,41 @@ function saveL() {
   var text = document.getElementById('ewords').value.trim();
   if (!text) { alert('Добавь слова!'); return; }
   if (editId) {
-    var l = getL(editId);
-    if (l) { l.name = name; l.text = text; }
+    var l = getL(editId); if (l) { l.name=name; l.text=text; }
   } else {
     var nid = 'L' + Date.now();
-    lists.push({ id: nid, name: name, text: text });
-    if (!actId) { actId = nid; LS.setItem('vt4_act', actId); }
+    lists.push({id:nid, name:name, text:text});
+    if (!actId) { actId=nid; LS.setItem('vt5_act',actId); }
   }
-  saveLists();
-  goSc('sc-lists');
+  saveLists(); goSc('sc-lists');
 }
 
 function delL(id) {
   if (!confirm('Удалить?')) return;
-  var nl = [];
-  for (var i = 0; i < lists.length; i++) if (lists[i].id !== id) nl.push(lists[i]);
-  lists = nl;
-  if (actId === id) { actId = lists.length ? lists[0].id : null; LS.setItem('vt4_act', actId || ''); }
+  lists = lists.filter(function(l){return l.id!==id;});
+  if (actId===id) { actId=lists.length?lists[0].id:null; LS.setItem('vt5_act',actId||''); }
   saveLists(); renderLists();
 }
 
 function shuf(a) {
-  var b = a.slice();
-  for (var i = b.length - 1; i > 0; i--) {
-    var j = Math.floor(Math.random() * (i + 1));
-    var t = b[i]; b[i] = b[j]; b[j] = t;
-  }
+  var b=a.slice();
+  for (var i=b.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=b[i];b[i]=b[j];b[j]=t;}
   return b;
 }
 
 function buildW() {
-  var l = getL(actId);
-  if (!l) return [];
-  return shuf(parseW(l.text));
+  var l = getL(actId); if (!l) return [];
+  var p = parseW(l.text);
+  if (md==='en-ru') p=p.map(function(x){return [x[1],x[0]];});
+  else if (md==='both') p=p.concat(p.map(function(x){return [x[1],x[0]];}));
+  if (document.getElementById('shuf').checked) p=shuf(p);
+  return p;
+}
+
+function setMd(m, idx) {
+  md = m;
+  for (var i=0;i<3;i++) document.getElementById('mb'+i).classList.toggle('on', i===idx);
+  if (words.length) { words=buildW(); wi=0; showW(); }
 }
 
 function startT() {
@@ -246,22 +278,21 @@ function startT() {
   words = buildW();
   if (!words.length) { alert('В списке нет слов!'); return; }
   wi = 0;
-  var l = getL(actId);
-  document.getElementById('tname').textContent = l ? l.name : '';
   goSc('sc-train');
   showW();
 }
 
 function showW() {
   revealed = false;
-  document.getElementById('cword').textContent = words[wi][0];
-  document.getElementById('ctr').textContent = words[wi][1];
-  document.getElementById('ctr').classList.remove('show');
+  var ctr = document.getElementById('ctr');
+  ctr.classList.remove('show');
+  ctr.textContent = words[wi][1];
   document.getElementById('chint').classList.remove('hide');
-  document.getElementById('tprog').textContent = (wi + 1) + ' / ' + words.length;
-  document.getElementById('pbar').style.width = Math.round((wi + 1) / words.length * 100) + '%';
   document.getElementById('nic').textContent = '\u25b6';
   document.getElementById('nlb').textContent = 'Далее';
+  document.getElementById('cword').textContent = words[wi][0];
+  document.getElementById('tprog').textContent = (wi+1) + ' / ' + words.length;
+  document.getElementById('pbar').style.width = Math.round((wi+1)/words.length*100) + '%';
 }
 
 function goNext() {
@@ -273,7 +304,10 @@ function goNext() {
     document.getElementById('nlb').textContent = 'Вперёд';
   } else {
     wi++;
-    if (wi >= words.length) { words = buildW(); wi = 0; }
+    if (wi >= words.length) {
+      if (document.getElementById('loop').checked) { words=buildW(); wi=0; }
+      else { goSc('sc-lists'); return; }
+    }
     showW();
   }
 }
@@ -282,20 +316,17 @@ function goPrev() {
   if (wi > 0) { wi--; showW(); }
 }
 
-function goHome() { goSc('sc-lists'); }
-
 document.addEventListener('keydown', function(e) {
-  var sc = document.querySelector('.screen.on');
+  var sc = document.querySelector('.sc.on');
   if (!sc || sc.id !== 'sc-train') return;
-  if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); goNext(); }
-  else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); goPrev(); }
-  else if (e.key === ' ') { e.preventDefault(); goNext(); }
+  if (e.key==='ArrowRight'||e.key==='ArrowDown') { e.preventDefault(); goNext(); }
+  else if (e.key==='ArrowLeft'||e.key==='ArrowUp') { e.preventDefault(); goPrev(); }
+  else if (e.key===' ') { e.preventDefault(); goNext(); }
 });
 
-// Init demo
 if (!lists.length) {
-  lists.push({ id: 'demo', name: 'Урок 1', text: 'я = I\nты = you\nон = he\nона = she\nмы = we\nони = they\nстудент = student\nучитель = teacher\nдом = house\nкнига = book\nкошка = cat\nсобака = dog' });
-  actId = 'demo'; saveLists(); LS.setItem('vt4_act', 'demo');
+  lists.push({id:'demo',name:'Урок 1',text:'я = I\nты = you\nон = he\nона = she\nмы = we\nони = they\nстудент = student\nучитель = teacher\nдом = house\nкнига = book\nкошка = cat\nсобака = dog'});
+  actId='demo'; saveLists(); LS.setItem('vt5_act','demo');
 }
 renderLists();
 </script>
