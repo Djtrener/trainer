@@ -5,240 +5,151 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>Тренажёр слов</title>
+<title>Слова</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-:root {
-  --bg: #0f0f0f; --surface: #1a1a1a; --surface2: #242424;
-  --border: #2e2e2e; --text: #f0f0f0; --muted: #666;
-  --accent: #c8f135; --ok: #3ecf8e; --err: #ff5c5c;
-}
-html, body {
-  height: 100%; width: 100%;
-  background: var(--bg); color: var(--text);
-  font-family: -apple-system, 'Inter', sans-serif;
-  overflow: hidden;
-}
+:root { --bg:#0f0f0f; --sur:#1a1a1a; --sur2:#242424; --brd:#2e2e2e; --txt:#f0f0f0; --mut:#666; --acc:#c8f135; --ok:#3ecf8e; --err:#ff5c5c; }
+html, body { height:100%; width:100%; background:var(--bg); color:var(--txt); font-family:-apple-system,sans-serif; overflow:hidden; }
 
-/* SCREENS */
-.screen { display: none; height: 100vh; width: 100%; flex-direction: column; }
-.screen.active { display: flex; }
+.screen { display:none; height:100dvh; width:100%; flex-direction:column; }
+.screen.on { display:flex; }
 
-/* ===== LISTS SCREEN ===== */
-#s-lists { padding: 0; }
-.lists-header {
-  padding: 1.2rem 1.4rem 1rem;
-  display: flex; justify-content: space-between; align-items: center;
-  border-bottom: 1px solid var(--border);
-  background: var(--surface);
-}
-.lists-header h1 { font-size: 17px; font-weight: 700; color: var(--accent); letter-spacing: -0.5px; }
-.btn-new {
-  background: var(--accent); color: #0f0f0f;
-  border: none; border-radius: 20px;
-  padding: 8px 16px; font-size: 13px; font-weight: 700; cursor: pointer;
-}
-.lists-body { flex: 1; overflow-y: auto; padding: 1rem; }
-.list-item {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: 14px; padding: 1rem 1.2rem;
-  margin-bottom: 10px; display: flex; align-items: center; gap: 10px;
-}
-.list-item.active-list { border-color: var(--accent); }
-.li-info { flex: 1; cursor: pointer; }
-.li-name { font-size: 16px; font-weight: 600; }
-.li-cnt { font-size: 12px; color: var(--muted); margin-top: 2px; }
-.li-btns { display: flex; gap: 6px; }
-.li-btns button { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; color: var(--muted); font-size: 16px; width: 34px; height: 34px; cursor: pointer; }
-.start-btn {
-  margin: 0 1rem 1.2rem;
-  background: var(--accent); color: #0f0f0f;
-  border: none; border-radius: 14px;
-  padding: 16px; font-size: 16px; font-weight: 700; cursor: pointer;
-  width: calc(100% - 2rem);
-}
-.empty-hint { text-align: center; color: var(--muted); padding: 3rem 1rem; font-size: 14px; }
-.empty-hint span { display: block; font-size: 40px; margin-bottom: 10px; }
+/* LISTS */
+.lhdr { padding:1rem 1.2rem; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--brd); background:var(--sur); flex-shrink:0; }
+.lhdr h1 { font-size:18px; font-weight:800; color:var(--acc); }
+.btn-new { background:var(--acc); color:#0f0f0f; border:none; border-radius:20px; padding:9px 18px; font-size:14px; font-weight:700; cursor:pointer; }
+.lbody { flex:1; overflow-y:auto; padding:1rem; min-height:0; }
+.litem { background:var(--sur); border:1px solid var(--brd); border-radius:14px; padding:1rem 1.2rem; margin-bottom:10px; display:flex; align-items:center; gap:10px; }
+.litem.sel { border-color:var(--acc); }
+.linfo { flex:1; cursor:pointer; }
+.lname { font-size:16px; font-weight:600; }
+.lcnt { font-size:12px; color:var(--mut); margin-top:2px; }
+.libts { display:flex; gap:8px; }
+.libts button { background:var(--sur2); border:1px solid var(--brd); border-radius:10px; color:var(--mut); font-size:18px; width:40px; height:40px; cursor:pointer; }
+.empty { text-align:center; color:var(--mut); padding:3rem 1rem; font-size:15px; }
+.empty span { display:block; font-size:40px; margin-bottom:10px; }
 
-/* ===== EDITOR SCREEN ===== */
-#s-editor { background: var(--bg); }
-.editor-header {
-  padding: 1.2rem 1.4rem;
-  display: flex; align-items: center; gap: 12px;
-  border-bottom: 1px solid var(--border);
-  background: var(--surface);
-}
-.back-btn { background: none; border: none; color: var(--muted); font-size: 22px; cursor: pointer; padding: 0 4px; }
-.editor-header h2 { font-size: 16px; font-weight: 600; flex: 1; }
-.save-btn { background: var(--accent); color: #0f0f0f; border: none; border-radius: 20px; padding: 7px 16px; font-size: 13px; font-weight: 700; cursor: pointer; }
-.editor-body { flex: 1; padding: 1rem; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; }
-.editor-body input, .editor-body textarea {
-  background: var(--surface); border: 1px solid var(--border);
-  border-radius: 10px; padding: 12px 14px;
-  font-size: 14px; color: var(--text); outline: none; width: 100%;
-}
-.editor-body input:focus, .editor-body textarea:focus { border-color: var(--accent); }
-.editor-body textarea { height: 55vh; resize: none; font-family: monospace; line-height: 1.8; }
-.editor-hint { font-size: 11px; color: var(--muted); padding: 0 2px; }
+/* START BUTTON AREA */
+.start-area { height:33dvh; min-height:130px; max-height:210px; display:flex; align-items:center; justify-content:center; padding:8px; flex-shrink:0; padding-bottom:calc(8px + env(safe-area-inset-bottom,0px)); }
+.start-btn { background:var(--acc); color:#0f0f0f; border:none; border-radius:22px; width:calc(33dvh - 16px); height:calc(33dvh - 16px); max-width:200px; max-height:200px; min-width:110px; min-height:110px; font-size:16px; font-weight:800; cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; }
+.start-btn:active { transform:scale(0.95); }
+.start-icon { font-size:38px; }
 
-/* ===== TRAINER SCREEN ===== */
-#s-trainer {
-  background: var(--bg);
-  position: relative;
-}
-.trainer-top {
-  padding: 1rem 1.2rem 0.6rem;
-  display: flex; justify-content: space-between; align-items: center;
-}
-.t-list-name { font-size: 13px; color: var(--muted); }
-.t-progress { font-size: 13px; color: var(--muted); }
-.pbar-wrap { height: 2px; background: var(--surface2); margin: 0 1.2rem; border-radius: 2px; overflow: hidden; }
-.pbar { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.3s; }
+/* EDITOR */
+.ehdr { padding:1rem 1.2rem; display:flex; align-items:center; gap:12px; border-bottom:1px solid var(--brd); background:var(--sur); flex-shrink:0; }
+.back { background:none; border:none; color:var(--mut); font-size:24px; cursor:pointer; padding:0 4px; }
+.ehdr h2 { font-size:16px; font-weight:600; flex:1; }
+.save { background:var(--acc); color:#0f0f0f; border:none; border-radius:20px; padding:8px 18px; font-size:14px; font-weight:700; cursor:pointer; }
+.ebody { flex:1; padding:1rem; display:flex; flex-direction:column; gap:10px; overflow-y:auto; }
+.ebody input, .ebody textarea { background:var(--sur); border:1px solid var(--brd); border-radius:12px; padding:12px 14px; font-size:14px; color:var(--txt); outline:none; width:100%; }
+.ebody input:focus, .ebody textarea:focus { border-color:var(--acc); }
+.ebody textarea { height:55vh; resize:none; font-family:monospace; line-height:1.9; }
+.ehint { font-size:11px; color:var(--mut); }
 
-.card-area {
-  flex: 1; display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  padding: 1.5rem 1.5rem 1rem;
-  cursor: pointer;
-  user-select: none;
-}
-.card-word {
-  font-size: clamp(28px, 8vw, 48px);
-  font-weight: 800; text-align: center;
-  color: var(--text); letter-spacing: -1px;
-  line-height: 1.1; margin-bottom: 1rem;
-}
-.card-translation {
-  font-size: clamp(18px, 5vw, 28px);
-  font-weight: 500; text-align: center;
-  color: var(--ok); min-height: 2em;
-  opacity: 0; transition: opacity 0.25s;
-  line-height: 1.3;
-}
-.card-translation.show { opacity: 1; }
-.tap-hint {
-  font-size: 13px; color: var(--muted);
-  margin-top: 1.5rem; opacity: 1;
-  transition: opacity 0.2s;
-}
-.tap-hint.hidden { opacity: 0; }
+/* TRAINER */
+.thdr { padding:0.8rem 1.2rem 0.4rem; display:flex; justify-content:space-between; align-items:center; flex-shrink:0; }
+.tname { font-size:13px; color:var(--mut); }
+.tprog { font-size:13px; color:var(--mut); }
+.pwrap { height:2px; background:var(--sur2); margin:0 1.2rem 0; flex-shrink:0; border-radius:2px; overflow:hidden; }
+.pbar { height:100%; background:var(--acc); border-radius:2px; transition:width 0.3s; }
 
-/* 3 bottom buttons */
-.bottom-btns {
-  display: flex; gap: 0;
-  padding: 0.8rem 1rem 1.4rem;
-  padding-bottom: calc(0.8rem + env(safe-area-inset-bottom, 0px));
-}
-.bbtn {
-  flex: 1; display: flex; flex-direction: column;
-  align-items: center; justify-content: center;
-  background: var(--surface); border: 1px solid var(--border);
-  padding: 14px 8px; cursor: pointer; gap: 5px;
-  transition: background 0.15s;
-}
-.bbtn:first-child { border-radius: 14px 0 0 14px; }
-.bbtn:last-child { border-radius: 0 14px 14px 0; }
-.bbtn:not(:first-child) { border-left: none; }
-.bbtn:active { background: var(--surface2); }
-.bbtn-icon { font-size: 22px; line-height: 1; }
-.bbtn-label { font-size: 11px; color: var(--muted); font-weight: 500; }
-.bbtn.center { background: var(--accent); border-color: var(--accent); }
-.bbtn.center .bbtn-icon { color: #0f0f0f; font-size: 26px; }
-.bbtn.center .bbtn-label { color: #1a2000; font-weight: 700; }
-.bbtn.center:active { opacity: 0.85; }
-.bbtn.stop-btn .bbtn-icon { color: var(--err); }
+.card { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:1rem 1.5rem; min-height:0; overflow:hidden; }
+.cword { font-size:clamp(28px,9vw,52px); font-weight:800; text-align:center; color:var(--txt); letter-spacing:-1px; line-height:1.1; margin-bottom:1.2rem; }
+.ctr { font-size:clamp(20px,6vw,34px); font-weight:500; text-align:center; color:var(--ok); min-height:1.5em; opacity:0; transition:opacity 0.2s; line-height:1.3; }
+.ctr.show { opacity:1; }
+.chint { font-size:13px; color:var(--mut); margin-top:1.2rem; }
+.chint.hide { opacity:0; }
 
-/* mode selector on trainer */
-.mode-bar {
-  display: flex; gap: 6px; padding: 0 1.2rem 0.6rem;
-}
-.mbtn {
-  flex: 1; padding: 7px 4px; font-size: 12px;
-  border: 1px solid var(--border); border-radius: 8px;
-  background: transparent; color: var(--muted); cursor: pointer;
-}
-.mbtn.on { border-color: var(--accent); color: var(--accent); background: rgba(200,241,53,0.07); }
+/* BOTTOM 3 BUTTONS */
+.bbtns { display:flex; gap:8px; padding:8px; padding-bottom:calc(8px + env(safe-area-inset-bottom,0px)); height:33dvh; min-height:130px; max-height:210px; flex-shrink:0; }
+.bb { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; background:var(--sur); border:1px solid var(--brd); border-radius:20px; cursor:pointer; gap:8px; transition:background 0.1s; }
+.bb:active { background:var(--sur2); transform:scale(0.96); }
+.bb-ic { font-size:34px; line-height:1; }
+.bb-lb { font-size:13px; color:var(--mut); font-weight:600; }
+.bb.mid { background:var(--acc); border-color:var(--acc); flex:1.3; }
+.bb.mid .bb-ic { color:#0f0f0f; font-size:40px; }
+.bb.mid .bb-lb { color:#1a2000; font-weight:700; font-size:14px; }
+.bb.mid:active { opacity:0.88; transform:scale(0.96); }
+.bb.stp .bb-ic { color:var(--err); }
 </style>
 </head>
 <body>
 
-<!-- LISTS SCREEN -->
-<div class="screen active" id="s-lists">
-  <div class="lists-header">
+<!-- LISTS -->
+<div class="screen on" id="sc-lists">
+  <div class="lhdr">
     <h1>&#127351; СЛОВА</h1>
-    <button class="btn-new" onclick="openEditor(null)">+ Список</button>
+    <button class="btn-new" onclick="openEd(null)">+ Список</button>
   </div>
-  <div class="lists-body" id="lists-body"></div>
-  <button class="start-btn" onclick="startTrainer()">&#9654; Начать</button>
-</div>
-
-<!-- EDITOR SCREEN -->
-<div class="screen" id="s-editor">
-  <div class="editor-header">
-    <button class="back-btn" onclick="showScreen('s-lists')">&#8592;</button>
-    <h2 id="ed-title">Новый список</h2>
-    <button class="save-btn" onclick="saveList()">Сохранить</button>
-  </div>
-  <div class="editor-body">
-    <input type="text" id="ed-name" placeholder="Название (напр: Урок 1)">
-    <textarea id="ed-words" placeholder="кот = cat&#10;собака = dog&#10;&#10;Или вставь из таблицы (Tab)"></textarea>
-    <div class="editor-hint">Формат: слово = word &nbsp;|&nbsp; или Tab (из Excel/Google Sheets)</div>
+  <div class="lbody" id="lbody"></div>
+  <div class="start-area">
+    <button class="start-btn" onclick="startT()">
+      <div class="start-icon">&#9654;</div>
+      Начать
+    </button>
   </div>
 </div>
 
-<!-- TRAINER SCREEN -->
-<div class="screen" id="s-trainer">
-  <div class="trainer-top">
-    <span class="t-list-name" id="t-listname"></span>
-    <span class="t-progress" id="t-prog"></span>
+<!-- EDITOR -->
+<div class="screen" id="sc-ed">
+  <div class="ehdr">
+    <button class="back" onclick="goSc('sc-lists')">&#8592;</button>
+    <h2 id="etitle">Новый список</h2>
+    <button class="save" onclick="saveL()">Сохранить</button>
   </div>
-  <div class="pbar-wrap"><div class="pbar" id="pbar"></div></div>
-  <div class="mode-bar">
-    <button class="mbtn on" id="mb0" onclick="setMode('ru-en',0)">RU &#8594; EN</button>
-    <button class="mbtn" id="mb1" onclick="setMode('en-ru',1)">EN &#8594; RU</button>
-    <button class="mbtn" id="mb2" onclick="setMode('both',2)">Оба</button>
+  <div class="ebody">
+    <input type="text" id="ename" placeholder="Название (напр: Урок 1)">
+    <textarea id="ewords" placeholder="кот = cat&#10;собака = dog&#10;&#10;Или вставь из таблицы (Tab)"></textarea>
+    <div class="ehint">Формат: слово = word &nbsp;|&nbsp; или Tab (из Excel / Google Sheets)</div>
   </div>
-  <div class="card-area" id="card-area" onclick="showTranslation()">
-    <div class="card-word" id="card-word"></div>
-    <div class="card-translation" id="card-tr"></div>
-    <div class="tap-hint" id="tap-hint">нажми чтобы увидеть перевод</div>
+</div>
+
+<!-- TRAINER -->
+<div class="screen" id="sc-train">
+  <div class="thdr">
+    <span class="tname" id="tname"></span>
+    <span class="tprog" id="tprog"></span>
   </div>
-  <div class="bottom-btns">
-    <button class="bbtn" onclick="goPrev()">
-      <div class="bbtn-icon">&#9664;</div>
-      <div class="bbtn-label">Назад</div>
+  <div class="pwrap"><div class="pbar" id="pbar"></div></div>
+  <div class="card" id="card">
+    <div class="cword" id="cword"></div>
+    <div class="ctr" id="ctr"></div>
+    <div class="chint" id="chint">нажми &#9654; Далее</div>
+  </div>
+  <div class="bbtns">
+    <button class="bb" onclick="goPrev()">
+      <div class="bb-ic">&#9664;</div>
+      <div class="bb-lb">Назад</div>
     </button>
-    <button class="bbtn center" onclick="goNext()">
-      <div class="bbtn-icon">&#9654;</div>
-      <div class="bbtn-label">Далее</div>
+    <button class="bb mid" onclick="goNext()">
+      <div class="bb-ic" id="nic">&#9654;</div>
+      <div class="bb-lb" id="nlb">Далее</div>
     </button>
-    <button class="bbtn stop-btn" onclick="goHome()">
-      <div class="bbtn-icon">&#9209;</div>
-      <div class="bbtn-label">Стоп</div>
+    <button class="bb stp" onclick="goHome()">
+      <div class="bb-ic">&#9209;</div>
+      <div class="bb-lb">Стоп</div>
     </button>
   </div>
 </div>
 
 <script>
 var LS = localStorage;
-var lists = JSON.parse(LS.getItem('vt3_lists') || '[]');
-var actId = LS.getItem('vt3_act') || null;
+var lists = JSON.parse(LS.getItem('vt4_lists') || '[]');
+var actId = LS.getItem('vt4_act') || null;
 var editId = null;
 var words = [];
 var wi = 0;
-var trMode = 'ru-en';
 var revealed = false;
 
-function saveLists() { LS.setItem('vt3_lists', JSON.stringify(lists)); }
+function saveLists() { LS.setItem('vt4_lists', JSON.stringify(lists)); }
 
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(function(s) { s.classList.remove('active'); });
-  document.getElementById(id).classList.add('active');
-  if (id === 's-lists') renderLists();
+function goSc(id) {
+  var ss = document.querySelectorAll('.screen');
+  for (var i = 0; i < ss.length; i++) ss[i].classList.remove('on');
+  document.getElementById(id).classList.add('on');
+  if (id === 'sc-lists') renderLists();
 }
 
-// ---- PARSE ----
 function parseW(text) {
   var res = [];
   var lines = text.trim().split('\n');
@@ -246,152 +157,145 @@ function parseW(text) {
     var ln = lines[i].trim();
     if (!ln) continue;
     var p = ln.indexOf('\t') >= 0 ? ln.split('\t') : ln.split('=');
-    if (p.length >= 2 && p[0].trim() && p[1].trim()) res.push([p[0].trim(), p[1].trim()]);
+    if (p.length >= 2 && p[0].trim() && p[1].trim()) {
+      res.push([p[0].trim(), p[1].trim()]);
+    }
   }
   return res;
 }
-function cntW(text) { return parseW(text).length; }
-function getList(id) { for (var i=0;i<lists.length;i++) if (lists[i].id===id) return lists[i]; return null; }
+
+function cntW(t) { return parseW(t).length; }
+function getL(id) { for (var i = 0; i < lists.length; i++) if (lists[i].id === id) return lists[i]; return null; }
 function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 
-// ---- LISTS ----
 function renderLists() {
-  var b = document.getElementById('lists-body');
+  var b = document.getElementById('lbody');
   if (!lists.length) {
-    b.innerHTML = '<div class="empty-hint"><span>&#128221;</span>Нет списков.<br>Создай первый!</div>';
+    b.innerHTML = '<div class="empty"><span>&#128221;</span>Нет списков.<br>Создай первый!</div>';
     return;
   }
   var h = '';
   for (var i = 0; i < lists.length; i++) {
     var l = lists[i];
-    var cls = actId === l.id ? ' active-list' : '';
-    h += '<div class="list-item' + cls + '">';
-    h += '<div class="li-info" onclick="actList(\'' + l.id + '\')">';
-    h += '<div class="li-name">' + esc(l.name) + '</div>';
-    h += '<div class="li-cnt">' + cntW(l.text) + ' слов</div></div>';
-    h += '<div class="li-btns">';
-    h += '<button onclick="openEditor(\'' + l.id + '\')">&#9998;</button>';
-    h += '<button onclick="delList(\'' + l.id + '\')" style="color:var(--err)">&#128465;</button>';
+    var s = actId === l.id ? ' sel' : '';
+    h += '<div class="litem' + s + '">';
+    h += '<div class="linfo" onclick="actL(\'' + l.id + '\')">';
+    h += '<div class="lname">' + esc(l.name) + '</div>';
+    h += '<div class="lcnt">' + cntW(l.text) + ' слов</div></div>';
+    h += '<div class="libts">';
+    h += '<button onclick="openEd(\'' + l.id + '\')">&#9998;</button>';
+    h += '<button style="color:var(--err)" onclick="delL(\'' + l.id + '\')">&#128465;</button>';
     h += '</div></div>';
   }
   b.innerHTML = h;
 }
 
-function actList(id) {
-  actId = id; LS.setItem('vt3_act', id); renderLists();
-}
+function actL(id) { actId = id; LS.setItem('vt4_act', id); renderLists(); }
 
-function openEditor(id) {
+function openEd(id) {
   editId = id;
-  var l = id ? getList(id) : null;
-  document.getElementById('ed-title').textContent = id ? 'Редактировать' : 'Новый список';
-  document.getElementById('ed-name').value = l ? l.name : '';
-  document.getElementById('ed-words').value = l ? l.text : '';
-  showScreen('s-editor');
+  var l = id ? getL(id) : null;
+  document.getElementById('etitle').textContent = id ? 'Редактировать' : 'Новый список';
+  document.getElementById('ename').value = l ? l.name : '';
+  document.getElementById('ewords').value = l ? l.text : '';
+  goSc('sc-ed');
 }
 
-function saveList() {
-  var name = document.getElementById('ed-name').value.trim() || 'Без названия';
-  var text = document.getElementById('ed-words').value.trim();
+function saveL() {
+  var name = document.getElementById('ename').value.trim() || 'Без названия';
+  var text = document.getElementById('ewords').value.trim();
   if (!text) { alert('Добавь слова!'); return; }
   if (editId) {
-    var l = getList(editId); if (l) { l.name = name; l.text = text; }
+    var l = getL(editId);
+    if (l) { l.name = name; l.text = text; }
   } else {
     var nid = 'L' + Date.now();
     lists.push({ id: nid, name: name, text: text });
-    if (!actId) { actId = nid; LS.setItem('vt3_act', actId); }
+    if (!actId) { actId = nid; LS.setItem('vt4_act', actId); }
   }
   saveLists();
-  showScreen('s-lists');
+  goSc('sc-lists');
 }
 
-function delList(id) {
+function delL(id) {
   if (!confirm('Удалить?')) return;
-  lists = lists.filter(function(l) { return l.id !== id; });
-  if (actId === id) { actId = lists.length ? lists[0].id : null; LS.setItem('vt3_act', actId||''); }
+  var nl = [];
+  for (var i = 0; i < lists.length; i++) if (lists[i].id !== id) nl.push(lists[i]);
+  lists = nl;
+  if (actId === id) { actId = lists.length ? lists[0].id : null; LS.setItem('vt4_act', actId || ''); }
   saveLists(); renderLists();
 }
 
-// ---- TRAINER ----
 function shuf(a) {
   var b = a.slice();
-  for (var i=b.length-1;i>0;i--) { var j=Math.floor(Math.random()*(i+1)); var t=b[i]; b[i]=b[j]; b[j]=t; }
+  for (var i = b.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var t = b[i]; b[i] = b[j]; b[j] = t;
+  }
   return b;
 }
 
-function buildWords() {
-  var l = getList(actId);
+function buildW() {
+  var l = getL(actId);
   if (!l) return [];
-  var p = parseW(l.text);
-  if (trMode === 'en-ru') p = p.map(function(x){return [x[1],x[0]];});
-  else if (trMode === 'both') p = p.concat(p.map(function(x){return [x[1],x[0]];}));
-  return shuf(p);
+  return shuf(parseW(l.text));
 }
 
-function startTrainer() {
+function startT() {
   if (!actId) { alert('Выбери список!'); return; }
-  words = buildWords();
+  words = buildW();
   if (!words.length) { alert('В списке нет слов!'); return; }
-  wi = 0; revealed = false;
-  var l = getList(actId);
-  document.getElementById('t-listname').textContent = l ? l.name : '';
-  showScreen('s-trainer');
-  showWord();
+  wi = 0;
+  var l = getL(actId);
+  document.getElementById('tname').textContent = l ? l.name : '';
+  goSc('sc-train');
+  showW();
 }
 
-function showWord() {
+function showW() {
   revealed = false;
-  document.getElementById('card-word').textContent = words[wi][0];
-  document.getElementById('card-tr').textContent = words[wi][1];
-  document.getElementById('card-tr').classList.remove('show');
-  document.getElementById('tap-hint').classList.remove('hidden');
-  document.getElementById('t-prog').textContent = (wi+1) + ' / ' + words.length;
-  document.getElementById('pbar').style.width = Math.round((wi+1)/words.length*100) + '%';
-}
-
-function showTranslation() {
-  if (revealed) return;
-  revealed = true;
-  document.getElementById('card-tr').classList.add('show');
-  document.getElementById('tap-hint').classList.add('hidden');
+  document.getElementById('cword').textContent = words[wi][0];
+  document.getElementById('ctr').textContent = words[wi][1];
+  document.getElementById('ctr').classList.remove('show');
+  document.getElementById('chint').classList.remove('hide');
+  document.getElementById('tprog').textContent = (wi + 1) + ' / ' + words.length;
+  document.getElementById('pbar').style.width = Math.round((wi + 1) / words.length * 100) + '%';
+  document.getElementById('nic').textContent = '\u25b6';
+  document.getElementById('nlb').textContent = 'Далее';
 }
 
 function goNext() {
-  wi++;
-  if (wi >= words.length) {
-    words = buildWords();
-    wi = 0;
+  if (!revealed) {
+    revealed = true;
+    document.getElementById('ctr').classList.add('show');
+    document.getElementById('chint').classList.add('hide');
+    document.getElementById('nic').textContent = '\u23ed';
+    document.getElementById('nlb').textContent = 'Вперёд';
+  } else {
+    wi++;
+    if (wi >= words.length) { words = buildW(); wi = 0; }
+    showW();
   }
-  showWord();
 }
 
 function goPrev() {
-  if (wi > 0) { wi--; showWord(); }
+  if (wi > 0) { wi--; showW(); }
 }
 
-function goHome() {
-  showScreen('s-lists');
-}
+function goHome() { goSc('sc-lists'); }
 
-function setMode(m, idx) {
-  trMode = m;
-  for (var i=0;i<3;i++) document.getElementById('mb'+i).classList.toggle('on', i===idx);
-  if (words.length) { words = buildWords(); wi=0; showWord(); }
-}
-
-// keyboard support
 document.addEventListener('keydown', function(e) {
-  var s = document.querySelector('.screen.active');
-  if (!s || s.id !== 's-trainer') return;
+  var sc = document.querySelector('.screen.on');
+  if (!sc || sc.id !== 'sc-train') return;
   if (e.key === 'ArrowRight' || e.key === 'ArrowDown') { e.preventDefault(); goNext(); }
   else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') { e.preventDefault(); goPrev(); }
-  else if (e.key === ' ') { e.preventDefault(); showTranslation(); }
+  else if (e.key === ' ') { e.preventDefault(); goNext(); }
 });
 
-// Init
+// Init demo
 if (!lists.length) {
-  lists.push({id:'demo', name:'Урок 1', text:'я = I\nты = you\nон = he\nона = she\nмы = we\nони = they\nстудент = student\nучитель = teacher\nдом = house\nкнига = book\nкошка = cat\nсобака = dog'});
-  actId='demo'; saveLists(); LS.setItem('vt3_act','demo');
+  lists.push({ id: 'demo', name: 'Урок 1', text: 'я = I\nты = you\nон = he\nона = she\nмы = we\nони = they\nстудент = student\nучитель = teacher\nдом = house\nкнига = book\nкошка = cat\nсобака = dog' });
+  actId = 'demo'; saveLists(); LS.setItem('vt4_act', 'demo');
 }
 renderLists();
 </script>
