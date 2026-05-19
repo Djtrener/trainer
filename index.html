@@ -8,7 +8,7 @@
 <title>Слова</title>
 <style>
 * { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
-:root { --bg:#0f0f0f; --sur:#1c1c1c; --sur2:#272727; --brd:#333; --txt:#f0f0f0; --mut:#666; --acc:#c8f135; --ok:#3ecf8e; }
+:root { --bg:#111318; --sur:#1e2128; --sur2:#272b34; --brd:#353840; --txt:#dde2ec; --mut:#6b7280; --acc:#a8c060; --ok:#5ab896; }
 html,body { height:100%; width:100%; background:var(--bg); color:var(--txt); font-family:-apple-system,sans-serif; overflow:hidden; }
 
 .sc { display:none; height:100dvh; width:100%; flex-direction:column; }
@@ -55,8 +55,8 @@ html,body { height:100%; width:100%; background:var(--bg); color:var(--txt); fon
 .t4ic { font-size:18px; color:var(--mut); }
 .t4lb { font-size:10px; color:var(--mut); font-weight:600; text-align:center; line-height:1.2; }
 .t4btn.on .t4ic { color:var(--acc); }
-.t4btn.stop .t4ic { color:#ff5c5c; }
-.t4btn.stop .t4lb { color:#ff5c5c; }
+.t4btn.stop .t4ic { color:#c0706a; }
+.t4btn.stop .t4lb { color:#c0706a; }
 
 /* options row */
 .opts { display:flex; gap:16px; padding:8px 12px 0; flex-shrink:0; }
@@ -71,8 +71,10 @@ input[type=checkbox] { accent-color:var(--acc); width:16px; height:16px; }
 /* card */
 .card { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:1rem 1.5rem; min-height:0; overflow:hidden; }
 .cword { font-size:clamp(48px,14vw,86px); font-weight:800; text-align:center; color:var(--txt); letter-spacing:-1px; line-height:1.1; margin-bottom:1.2rem; }
-.ctr { font-size:clamp(30px,9vw,56px); font-weight:500; text-align:center; color:var(--ok); min-height:1.4em; visibility:hidden; transition:none; line-height:1.3; }
+.ctr { font-size:clamp(36px,11vw,64px); font-weight:600; text-align:center; color:var(--ok); min-height:1.4em; visibility:hidden; transition:none; line-height:1.3; }
 .ctr.show { visibility:visible; }
+.ctrans { font-size:clamp(20px,6vw,34px); text-align:center; color:var(--mut); visibility:hidden; margin-top:0.5rem; font-style:italic; }
+.ctrans.show { visibility:visible; }
 .chint { font-size:14px; color:var(--mut); margin-top:1rem; }
 .chint.hide { opacity:0; }
 
@@ -116,7 +118,7 @@ input[type=checkbox] { accent-color:var(--acc); width:16px; height:16px; }
 </div>
 
 <!-- TRAINER -->
-<div class="sc" id="sc-train">
+<div class="sc" id="sc-train" onclick="onScreenClick(event)">
   <!-- top 4 buttons -->
   <div class="top4">
     <button class="t4btn on" id="mb0" onclick="setMd('ru-en',0)">
@@ -151,6 +153,7 @@ input[type=checkbox] { accent-color:var(--acc); width:16px; height:16px; }
   <div class="card">
     <div class="cword" id="cword"></div>
     <div class="ctr" id="ctr"></div>
+    <div class="ctrans" id="ctrans"></div>
     <div class="chint" id="chint">нажми &#9654; Далее</div>
   </div>
 
@@ -193,7 +196,12 @@ function parseW(text) {
     var ln = lines[i].trim();
     if (!ln) continue;
     var p = ln.indexOf('\t') >= 0 ? ln.split('\t') : ln.split('=');
-    if (p.length >= 2 && p[0].trim() && p[1].trim()) res.push([p[0].trim(), p[1].trim()]);
+    if (p.length >= 2 && p[0].trim() && p[1].trim()) {
+      var word = p[0].trim();
+      var tr = p[1].trim();
+      var trans = p.length >= 3 ? p[2].trim() : '';
+      res.push([word, tr, trans]);
+    }
   }
   return res;
 }
@@ -201,6 +209,11 @@ function parseW(text) {
 function cntW(t) { return parseW(t).length; }
 function getL(id) { for (var i=0;i<lists.length;i++) if (lists[i].id===id) return lists[i]; return null; }
 function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function onScreenClick(e) {
+  if (e.target.closest('button') || e.target.closest('label') || e.target.closest('input')) return;
+  goNext();
+}
 
 function renderLists() {
   var b = document.getElementById('lbody');
@@ -261,8 +274,8 @@ function shuf(a) {
 function buildW() {
   var l = getL(actId); if (!l) return [];
   var p = parseW(l.text);
-  if (md==='en-ru') p=p.map(function(x){return [x[1],x[0]];});
-  else if (md==='both') p=p.concat(p.map(function(x){return [x[1],x[0]];}));
+  if (md==='ru-en') p=p.map(function(x){return [x[1],x[0],x[2]];});
+  else if (md==='both') p=p.concat(p.map(function(x){return [x[1],x[0],x[2]];}));
   if (document.getElementById('shuf').checked) p=shuf(p);
   return p;
 }
@@ -285,8 +298,11 @@ function startT() {
 function showW() {
   revealed = false;
   var ctr = document.getElementById('ctr');
+  var ctrans = document.getElementById('ctrans');
   ctr.classList.remove('show');
+  ctrans.classList.remove('show');
   ctr.textContent = words[wi][1];
+  ctrans.textContent = words[wi][2] || '';
   document.getElementById('chint').classList.remove('hide');
   document.getElementById('nic').textContent = '\u25b6';
   document.getElementById('nlb').textContent = 'Далее';
@@ -299,6 +315,7 @@ function goNext() {
   if (!revealed) {
     revealed = true;
     document.getElementById('ctr').classList.add('show');
+    if (document.getElementById('ctrans').textContent) document.getElementById('ctrans').classList.add('show');
     document.getElementById('chint').classList.add('hide');
     document.getElementById('nic').textContent = '\u23ed';
     document.getElementById('nlb').textContent = 'Вперёд';
