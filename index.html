@@ -14,7 +14,7 @@ html,body { height:100%; width:100%; background:var(--bg); color:var(--txt); fon
 .sc { display:none; height:100dvh; width:100%; flex-direction:column; }
 .sc.on { display:flex; }
 
-/* ── LISTS SCREEN ── */
+/* LISTS */
 .lhdr { padding:1rem 1.2rem; display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--brd); background:var(--sur); flex-shrink:0; }
 .lhdr h1 { font-size:18px; font-weight:800; color:var(--acc); }
 .anew { background:var(--acc); color:#0f0f0f; border:none; border-radius:20px; padding:9px 18px; font-size:14px; font-weight:700; cursor:pointer; }
@@ -33,7 +33,7 @@ html,body { height:100%; width:100%; background:var(--bg); color:var(--txt); fon
 .sbtn:active { background:var(--sur2); transform:scale(0.95); }
 .sbtn-ic { font-size:34px; color:var(--acc); }
 
-/* ── EDITOR ── */
+/* EDITOR */
 .ehdr { padding:1rem 1.2rem; display:flex; align-items:center; gap:12px; border-bottom:1px solid var(--brd); background:var(--sur); flex-shrink:0; }
 .eback { background:none; border:none; color:var(--mut); font-size:24px; cursor:pointer; }
 .ehdr h2 { font-size:16px; font-weight:600; flex:1; }
@@ -44,46 +44,43 @@ html,body { height:100%; width:100%; background:var(--bg); color:var(--txt); fon
 .ebody textarea { height:52vh; resize:none; font-family:monospace; line-height:1.9; }
 .ehint { font-size:11px; color:var(--mut); }
 
-/* ── TRAINER ── */
+/* TRAINER */
+/* top 5 buttons */
+.top5 { display:flex; gap:5px; padding:8px 8px 0; flex-shrink:0; }
+.t5btn { flex:1; aspect-ratio:1; background:var(--sur); border:1px solid var(--brd); border-radius:12px; cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; max-height:64px; }
+.t5btn:active { background:var(--sur2); transform:scale(0.95); }
+.t5btn.on { border-color:var(--acc); }
+.t5btn.on .t5lb { color:var(--acc); }
+.t5btn.on .t5ic { color:var(--acc); }
+.t5ic { font-size:16px; color:var(--mut); }
+.t5lb { font-size:9px; color:var(--mut); font-weight:600; text-align:center; line-height:1.2; }
+.t5btn.stop .t5ic { color:#c0706a; }
+.t5btn.stop .t5lb { color:#c0706a; }
+.t5btn.prev .t5ic { color:var(--mut); }
 
-/* top 4 buttons */
-.top4 { display:flex; gap:6px; padding:8px 8px 0; flex-shrink:0; }
-.t4btn { flex:1; aspect-ratio:1; background:var(--sur); border:1px solid var(--brd); border-radius:14px; cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:4px; max-height:72px; }
-.t4btn:active { background:var(--sur2); transform:scale(0.95); }
-.t4btn.on { border-color:var(--acc); }
-.t4btn.on .t4lb { color:var(--acc); }
-.t4ic { font-size:18px; color:var(--mut); }
-.t4lb { font-size:10px; color:var(--mut); font-weight:600; text-align:center; line-height:1.2; }
-.t4btn.on .t4ic { color:var(--acc); }
-.t4btn.stop .t4ic { color:#c0706a; }
-.t4btn.stop .t4lb { color:#c0706a; }
-
-/* options row */
-.opts { display:flex; gap:16px; padding:8px 12px 0; flex-shrink:0; }
+/* options */
+.opts { display:flex; gap:16px; padding:6px 12px 0; flex-shrink:0; }
 .ck { display:flex; align-items:center; gap:6px; font-size:13px; color:var(--mut); cursor:pointer; }
 input[type=checkbox] { accent-color:var(--acc); width:16px; height:16px; }
 
 /* progress */
-.pwrap { height:2px; background:var(--sur2); margin:8px 12px 0; flex-shrink:0; border-radius:2px; overflow:hidden; }
+.pwrap { height:2px; background:var(--sur2); margin:6px 12px 0; flex-shrink:0; border-radius:2px; overflow:hidden; }
 .pbar { height:100%; background:var(--acc); border-radius:2px; transition:width 0.3s; }
-.tprog { text-align:right; font-size:12px; color:var(--mut); padding:4px 12px 0; flex-shrink:0; }
+.tprog { text-align:right; font-size:12px; color:var(--mut); padding:3px 12px 0; flex-shrink:0; }
 
-/* card */
-.card { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:1rem 1.5rem; min-height:0; overflow:hidden; }
-.cword { font-size:clamp(48px,14vw,86px); font-weight:800; text-align:center; color:var(--txt); letter-spacing:-1px; line-height:1.1; margin-bottom:1.2rem; }
-.ctr { font-size:clamp(36px,11vw,64px); font-weight:600; text-align:center; color:var(--ok); min-height:1.4em; visibility:hidden; transition:none; line-height:1.3; }
+/* card - clickable area */
+.card { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:1rem 1.2rem; min-height:0; overflow:hidden; cursor:pointer; user-select:none; }
+
+/* word - 2x smaller than before */
+.cword { font-size:clamp(24px,7vw,44px); font-weight:800; text-align:center; color:var(--txt); letter-spacing:-0.5px; line-height:1.2; margin-bottom:1rem; }
+
+/* translation */
+.ctr { font-size:clamp(20px,6vw,36px); font-weight:600; text-align:center; color:var(--ok); visibility:hidden; line-height:1.3; }
 .ctr.show { visibility:visible; }
-.ctrans { font-size:clamp(20px,6vw,34px); text-align:center; color:var(--mut); visibility:hidden; margin-top:0.5rem; font-style:italic; }
-.ctrans.show { visibility:visible; }
-.chint { font-size:14px; color:var(--mut); margin-top:1rem; }
-.chint.hide { opacity:0; }
 
-/* bottom 2 buttons */
-.bot2 { display:flex; gap:8px; padding:8px; padding-bottom:calc(8px + env(safe-area-inset-bottom,0px)); flex-shrink:0; }
-.b2btn { flex:1; aspect-ratio:1; background:var(--sur); border:1px solid var(--brd); border-radius:20px; cursor:pointer; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; max-height:130px; }
-.b2btn:active { background:var(--sur2); transform:scale(0.96); }
-.b2ic { font-size:36px; color:var(--mut); line-height:1; }
-.b2lb { font-size:13px; color:var(--mut); font-weight:600; }
+/* transcription - always below translation, never overlapping */
+.ctrans { font-size:clamp(14px,4vw,22px); text-align:center; color:var(--mut); visibility:hidden; margin-top:0.6rem; font-style:italic; line-height:1.4; }
+.ctrans.show { visibility:visible; }
 </style>
 </head>
 <body>
@@ -118,24 +115,28 @@ input[type=checkbox] { accent-color:var(--acc); width:16px; height:16px; }
 </div>
 
 <!-- TRAINER -->
-<div class="sc" id="sc-train" onclick="onScreenClick(event)">
-  <!-- top 4 buttons -->
-  <div class="top4">
-    <button class="t4btn on" id="mb0" onclick="setMd('ru-en',0)">
-      <div class="t4ic">RU</div>
-      <div class="t4lb">&#8594; EN</div>
+<div class="sc" id="sc-train">
+  <!-- top 5 buttons: Назад | RU→EN | EN→RU | Оба | Стоп -->
+  <div class="top5">
+    <button class="t5btn prev" onclick="goPrev()">
+      <div class="t5ic">&#9664;</div>
+      <div class="t5lb">Назад</div>
     </button>
-    <button class="t4btn" id="mb1" onclick="setMd('en-ru',1)">
-      <div class="t4ic">EN</div>
-      <div class="t4lb">&#8594; RU</div>
+    <button class="t5btn on" id="mb0" onclick="setMd('ru-en',0)">
+      <div class="t5ic">RU</div>
+      <div class="t5lb">&#8594; EN</div>
     </button>
-    <button class="t4btn" id="mb2" onclick="setMd('both',2)">
-      <div class="t4ic">&#8644;</div>
-      <div class="t4lb">Оба</div>
+    <button class="t5btn" id="mb1" onclick="setMd('en-ru',1)">
+      <div class="t5ic">EN</div>
+      <div class="t5lb">&#8594; RU</div>
     </button>
-    <button class="t4btn stop" onclick="goSc('sc-lists')">
-      <div class="t4ic">&#9209;</div>
-      <div class="t4lb">Стоп</div>
+    <button class="t5btn" id="mb2" onclick="setMd('both',2)">
+      <div class="t5ic">&#8644;</div>
+      <div class="t5lb">Оба</div>
+    </button>
+    <button class="t5btn stop" onclick="goSc('sc-lists')">
+      <div class="t5ic">&#9209;</div>
+      <div class="t5lb">Стоп</div>
     </button>
   </div>
 
@@ -149,24 +150,11 @@ input[type=checkbox] { accent-color:var(--acc); width:16px; height:16px; }
   <div class="pwrap"><div class="pbar" id="pbar"></div></div>
   <div class="tprog" id="tprog">1 / 1</div>
 
-  <!-- card -->
-  <div class="card">
+  <!-- card = entire clickable area -->
+  <div class="card" id="card" onclick="goNext()">
     <div class="cword" id="cword"></div>
     <div class="ctr" id="ctr"></div>
     <div class="ctrans" id="ctrans"></div>
-    <div class="chint" id="chint">нажми &#9654; Далее</div>
-  </div>
-
-  <!-- bottom 2 buttons -->
-  <div class="bot2">
-    <button class="b2btn" onclick="goPrev()">
-      <div class="b2ic">&#9664;</div>
-      <div class="b2lb">Назад</div>
-    </button>
-    <button class="b2btn" onclick="goNext()" id="nbtn">
-      <div class="b2ic" id="nic">&#9654;</div>
-      <div class="b2lb" id="nlb">Далее</div>
-    </button>
   </div>
 </div>
 
@@ -197,10 +185,7 @@ function parseW(text) {
     if (!ln) continue;
     var p = ln.indexOf('\t') >= 0 ? ln.split('\t') : ln.split('=');
     if (p.length >= 2 && p[0].trim() && p[1].trim()) {
-      var word = p[0].trim();
-      var tr = p[1].trim();
-      var trans = p.length >= 3 ? p[2].trim() : '';
-      res.push([word, tr, trans]);
+      res.push([p[0].trim(), p[1].trim(), p.length >= 3 ? p[2].trim() : '']);
     }
   }
   return res;
@@ -209,11 +194,6 @@ function parseW(text) {
 function cntW(t) { return parseW(t).length; }
 function getL(id) { for (var i=0;i<lists.length;i++) if (lists[i].id===id) return lists[i]; return null; }
 function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-
-function onScreenClick(e) {
-  if (e.target.closest('button') || e.target.closest('label') || e.target.closest('input')) return;
-  goNext();
-}
 
 function renderLists() {
   var b = document.getElementById('lbody');
@@ -303,9 +283,6 @@ function showW() {
   ctrans.classList.remove('show');
   ctr.textContent = words[wi][1];
   ctrans.textContent = words[wi][2] || '';
-  document.getElementById('chint').classList.remove('hide');
-  document.getElementById('nic').textContent = '\u25b6';
-  document.getElementById('nlb').textContent = 'Далее';
   document.getElementById('cword').textContent = words[wi][0];
   document.getElementById('tprog').textContent = (wi+1) + ' / ' + words.length;
   document.getElementById('pbar').style.width = Math.round((wi+1)/words.length*100) + '%';
@@ -315,10 +292,9 @@ function goNext() {
   if (!revealed) {
     revealed = true;
     document.getElementById('ctr').classList.add('show');
-    if (document.getElementById('ctrans').textContent) document.getElementById('ctrans').classList.add('show');
-    document.getElementById('chint').classList.add('hide');
-    document.getElementById('nic').textContent = '\u23ed';
-    document.getElementById('nlb').textContent = 'Вперёд';
+    if (document.getElementById('ctrans').textContent) {
+      document.getElementById('ctrans').classList.add('show');
+    }
   } else {
     wi++;
     if (wi >= words.length) {
@@ -336,9 +312,8 @@ function goPrev() {
 document.addEventListener('keydown', function(e) {
   var sc = document.querySelector('.sc.on');
   if (!sc || sc.id !== 'sc-train') return;
-  if (e.key==='ArrowRight'||e.key==='ArrowDown') { e.preventDefault(); goNext(); }
+  if (e.key==='ArrowRight'||e.key==='ArrowDown'||e.key===' ') { e.preventDefault(); goNext(); }
   else if (e.key==='ArrowLeft'||e.key==='ArrowUp') { e.preventDefault(); goPrev(); }
-  else if (e.key===' ') { e.preventDefault(); goNext(); }
 });
 
 if (!lists.length) {
