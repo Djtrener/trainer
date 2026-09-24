@@ -71,7 +71,7 @@ input[type=checkbox] { accent-color:var(--acc); width:16px; height:16px; }
 /* card - clickable area */
 .card { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; margin-top:-15%; padding:1rem 1.2rem; min-height:0; overflow:hidden; cursor:pointer; user-select:none; }
 
-/* word - 2x smaller than before */
+/* word */
 .cword { font-size:clamp(24px,7vw,44px); font-weight:800; text-align:center; color:var(--txt); letter-spacing:-0.5px; line-height:1.2; margin-bottom:1rem; }
 
 /* translation */
@@ -110,7 +110,7 @@ input[type=checkbox] { accent-color:var(--acc); width:16px; height:16px; }
   <div class="ebody">
     <input type="text" id="ename" placeholder="Название (напр: Урок 1)">
     <textarea id="ewords" placeholder="кот = cat&#10;собака = dog&#10;&#10;Или вставь из таблицы (Tab)"></textarea>
-    <div class="ehint">Формат: слово = word &nbsp;|&nbsp; Tab (из Excel / Google Sheets)</div>
+    <div class="ehint">Формат: слово = word &nbsp;|&nbsp; Tab: артикль, слово, перевод, транскрипция</div>
   </div>
 </div>
 
@@ -179,11 +179,22 @@ function goSc(id) {
 
 function parseW(text) {
   var res = [];
-  var lines = text.trim().split('\n');
+  var lines = text.replace(/\r/g, '').split('\n');
   for (var i = 0; i < lines.length; i++) {
-    var ln = lines[i].trim();
-    if (!ln) continue;
-    var p = ln.indexOf('\t') >= 0 ? ln.split('\t') : ln.split('=');
+    var raw = lines[i];
+    if (!raw.trim()) continue;
+    var p;
+    if (raw.indexOf('\t') >= 0) {
+      p = raw.split('\t');
+      if (p.length >= 4) {
+        // 4 колонки: артикль | слово | перевод | транскрипция
+        var art = p[0].trim(), w = p[1].trim();
+        var it = art ? (/['’]$/.test(art) ? art + w : art + ' ' + w) : w;
+        p = [it, p[2], p[3]];
+      }
+    } else {
+      p = raw.split('=');
+    }
     if (p.length >= 2 && p[0].trim() && p[1].trim()) {
       res.push([p[0].trim(), p[1].trim(), p.length >= 3 ? p[2].trim() : '']);
     }
@@ -226,8 +237,8 @@ function openEd(id) {
 
 function saveL() {
   var name = document.getElementById('ename').value.trim() || 'Без названия';
-  var text = document.getElementById('ewords').value.trim();
-  if (!text) { alert('Добавь слова!'); return; }
+  var text = document.getElementById('ewords').value.replace(/^[\r\n]+|[\r\n]+$/g, '');
+  if (!text.trim()) { alert('Добавь слова!'); return; }
   if (editId) {
     var l = getL(editId); if (l) { l.name=name; l.text=text; }
   } else {
