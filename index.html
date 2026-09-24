@@ -59,7 +59,7 @@ html,body { height:100%; width:100%; background:var(--bg); color:var(--txt); fon
 .t5btn.prev .t5ic { color:var(--mut); }
 
 /* options */
-.opts { display:flex; gap:16px; padding:6px 12px 0; flex-shrink:0; }
+.opts { display:flex; gap:16px; padding:6px 12px 0; flex-shrink:0; position:relative; z-index:2; }
 .ck { display:flex; align-items:center; gap:6px; font-size:13px; color:var(--mut); cursor:pointer; }
 input[type=checkbox] { accent-color:var(--acc); width:16px; height:16px; }
 
@@ -69,7 +69,7 @@ input[type=checkbox] { accent-color:var(--acc); width:16px; height:16px; }
 .tprog { text-align:right; font-size:12px; color:var(--mut); padding:3px 12px 0; flex-shrink:0; }
 
 /* card - clickable area */
-.card { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; margin-top:-15%; padding:1rem 1.2rem; min-height:0; overflow:hidden; cursor:pointer; user-select:none; }
+.card { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:1rem 1.2rem 15vw; min-height:0; overflow:hidden; cursor:pointer; user-select:none; }
 
 /* word */
 .cword { font-size:clamp(24px,7vw,44px); font-weight:800; text-align:center; color:var(--txt); letter-spacing:-0.5px; line-height:1.2; margin-bottom:1rem; }
@@ -78,6 +78,7 @@ input[type=checkbox] { accent-color:var(--acc); width:16px; height:16px; }
 .ctr { font-size:clamp(20px,6vw,36px); font-weight:600; text-align:center; color:var(--ok); visibility:hidden; line-height:1.3; }
 .ctr.show { visibility:visible; }
 
+.cwtrans { display:none; font-size:clamp(14px,4vw,22px); text-align:center; color:var(--mut); margin-top:-0.5rem; margin-bottom:1rem; font-style:italic; line-height:1.4; }
 /* transcription - always below translation, never overlapping */
 .ctrans { font-size:clamp(14px,4vw,22px); text-align:center; color:var(--mut); visibility:hidden; margin-top:0.6rem; font-style:italic; line-height:1.4; }
 .ctrans.show { visibility:visible; }
@@ -142,7 +143,7 @@ input[type=checkbox] { accent-color:var(--acc); width:16px; height:16px; }
 
   <!-- checkboxes -->
   <div class="opts">
-    <label class="ck"><input type="checkbox" id="shuf" checked> перемешать</label>
+    <label class="ck"><input type="checkbox" id="shuf" checked onchange="applyOpts()"> перемешать</label>
     <label class="ck"><input type="checkbox" id="loop" checked> &#128260; цикл</label>
   </div>
 
@@ -153,6 +154,7 @@ input[type=checkbox] { accent-color:var(--acc); width:16px; height:16px; }
   <!-- card = entire clickable area -->
   <div class="card" id="card" onclick="goNext()">
     <div class="cword" id="cword"></div>
+    <div class="cwtrans" id="cwtrans"></div>
     <div class="ctr" id="ctr"></div>
     <div class="ctrans" id="ctrans"></div>
   </div>
@@ -265,10 +267,19 @@ function shuf(a) {
 function buildW() {
   var l = getL(actId); if (!l) return [];
   var p = parseW(l.text);
-  if (md==='ru-en') p=p.map(function(x){return [x[1],x[0],x[2]];});
-  else if (md==='both') p=p.concat(p.map(function(x){return [x[1],x[0],x[2]];}));
-  if (document.getElementById('shuf').checked) p=shuf(p);
-  return p;
+  // f = true, если на лицевой стороне слово из 1-й колонки (то, к чему относится транскрипция)
+  var fwd = p.map(function(x){return {q:x[0], a:x[1], t:x[2], f:true};});
+  var rev = p.map(function(x){return {q:x[1], a:x[0], t:x[2], f:false};});
+  var r;
+  if (md==='ru-en') r = rev;
+  else if (md==='en-ru') r = fwd;
+  else r = fwd.concat(rev);
+  if (document.getElementById('shuf').checked) r = shuf(r);
+  return r;
+}
+
+function applyOpts() {
+  if (words.length) { words = buildW(); wi = 0; showW(); }
 }
 
 function setMd(m, idx) {
@@ -288,13 +299,19 @@ function startT() {
 
 function showW() {
   revealed = false;
+  var w = words[wi];
   var ctr = document.getElementById('ctr');
   var ctrans = document.getElementById('ctrans');
+  var cwt = document.getElementById('cwtrans');
   ctr.classList.remove('show');
   ctrans.classList.remove('show');
-  ctr.textContent = words[wi][1];
-  ctrans.textContent = words[wi][2] || '';
-  document.getElementById('cword').textContent = words[wi][0];
+  document.getElementById('cword').textContent = w.q;
+  // транскрипция сразу под словом, если оно на лицевой стороне
+  cwt.textContent = w.f ? w.t : '';
+  cwt.style.display = (w.f && w.t) ? 'block' : 'none';
+  ctr.textContent = w.a;
+  // транскрипция появляется вместе с ответом, если слово - в ответе
+  ctrans.textContent = w.f ? '' : w.t;
   document.getElementById('tprog').textContent = (wi+1) + ' / ' + words.length;
   document.getElementById('pbar').style.width = Math.round((wi+1)/words.length*100) + '%';
 }
